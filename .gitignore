@@ -1,0 +1,16 @@
+__pycache__*
+test_data*
+.ccls-cache*
+nohup.out
+sim-beta/.ccls*
+sim-beta/Debug
+sim-beta/build
+sim-beta/compile_commands.json
+*.bin
+*.bak*
+*tmp
+*temp*
+*core*
+*.png
+*.npy
+*.pdf
