@@ -14,3 +14,6 @@ sim-beta/compile_commands.json
 *.png
 *.npy
 *.pdf
+*dist
+*egg-info
+*build
