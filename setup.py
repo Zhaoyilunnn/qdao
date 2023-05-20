@@ -1,9 +1,9 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='qdao',
     version='0.1',
-    packages=['qdao'],
+    packages=find_packages(),
     install_requires=[
 
     ],
