@@ -114,7 +114,7 @@ def _append_init_sv(self, instruction, qargs=None, cargs=None):
         instruction = CircuitInstruction(instruction, qargs, cargs)
     self._data.append(instruction)
 
-    # FIXME(zhaoyilun): No need to do so when appending initializing
+    # FIXME: No need to do so when appending initializing
     # statevector instruction
     #if isinstance(instruction.operation, Instruction):
     #    self._update_parameter_table(instruction)
@@ -179,7 +179,7 @@ def append_init_sv(
     if not isinstance(operation, Operation):
         raise CircuitError("object is not an Operation.")
 
-    # FIXME(zhaoyilun): No use when initializing statevector
+    # FIXME: No use when initializing statevector
     ## Make copy of parameterized gate instances
     #if hasattr(operation, "params"):
     #    is_parameter = any(isinstance(param, Parameter) for param in operation.params)

@@ -109,7 +109,7 @@ class SvManager:
     def load_sv(self, org_qubits: List[int]):
         """Load a `chunk` of statevector into memory
         Reference: sim-beta/statevector/src/statevector.cpp
-        TODO(zhaoyilun): detailed description
+        TODO: detailed description
         """
         #if len(org_qubits) <= self._nl:
         if len(org_qubits) < self._nl:

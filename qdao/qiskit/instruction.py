@@ -215,7 +215,7 @@ class Instruction(Operation):
 
     @params.setter
     def params(self, parameters):
-        # FIXME(zhaoyilun): No need to
+        # FIXME: No need to
         # append one-by-one when setting statevector
         st = time.time()
         #if isinstance(parameters, list):
@@ -306,7 +306,7 @@ class Instruction(Operation):
         # Evaluate parameters
         #if self.params:
         #params = [x.evalf(x) if hasattr(x, "evalf") else x for x in self.params]
-        # FIXME(zhaoyilun): No need to do so for initializing statevector
+        # FIXME: No need to do so for initializing statevector
         instruction.params = self.params
         # Add placeholder for qarg and carg params
         if self.num_qubits:

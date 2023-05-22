@@ -59,7 +59,7 @@ class Engine:
         self._np, self._nl = num_primary, num_local
         self._num_chunks = 1 << (self._nq - self._np)
 
-        #FIXME(zhaoyilun): Put initialize to run
+        #FIXME: Put initialize to run
         #self._initialize()
 
     @property

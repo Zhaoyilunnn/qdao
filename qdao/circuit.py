@@ -122,7 +122,7 @@ class StaticPartitioner(BasePartitioner):
                             )
                 sub_circs.append(sub_circ)
                 logging.info("Find sub-circuit: {}, qubits: {}".format(sub_circ.circ, qset))
-                # FIXME(zhaoyilun): Here the instr's qubits size may exceed
+                # FIXME: Here the instr's qubits size may exceed
                 # (self._np - self._nl)
                 instrs = [instr]
                 qset = qs

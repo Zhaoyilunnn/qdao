@@ -37,9 +37,9 @@ class QuafuCircuitHelper:
     def instructions(self):
         if not isinstance(self._circ, QuantumCircuit):
             raise ValueError("Please set circ")
-        # FIXME(zhaoyilun): temporarily remove barrier like this
+        # FIXME: temporarily remove barrier like this
         # Needs better impl
-        # TODO(zhaoyilun): For random circuit, no need to remove barrier
+        # TODO: For random circuit, no need to remove barrier
         # since it is not in the gate set. For qasm bench, needs better implementations
         return self._circ.gates
 

@@ -198,7 +198,7 @@ class StatePreparation(Gate):
             if num_qubits == 0 or not num_qubits.is_integer():
                 raise QiskitError("Desired statevector length not a positive power of 2.")
 
-            # FIXME(zhaoyilun): We need partial initialization and we suppress this
+            # FIXME: We need partial initialization and we suppress this
             ## Check if probabilities (amplitudes squared) sum to 1
             #if not math.isclose(sum(np.absolute(params) ** 2), 1.0, abs_tol=_EPS):
             #    raise QiskitError("Sum of amplitudes-squared does not equal one.")

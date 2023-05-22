@@ -16,7 +16,7 @@ class QuafuSimulator:
                 output="state_vector"
             ).get_statevector()
 
-        # FIXME(zhaoyilun): Quafu will return sv less than QuantumCircuit size
+        # FIXME: Quafu will return sv less than QuantumCircuit size
         expected_sv_size = 1<<simobj.circ.num
         if sv.shape[0] < expected_sv_size:
             assert expected_sv_size % sv.shape[0] == 0

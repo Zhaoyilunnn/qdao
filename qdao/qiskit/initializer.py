@@ -17,7 +17,7 @@ import numpy as np
 
 from qiskit.circuit import QuantumCircuit
 from qiskit.circuit import QuantumRegister
-# FIXME(zhaoyilun): Used modified instruction
+# FIXME: Used modified instruction
 #from qiskit.circuit import Instruction
 from qiskit.circuit import Qubit
 from qdao.qiskit.instruction import Instruction
