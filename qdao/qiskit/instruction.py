@@ -33,19 +33,18 @@ The circuit itself keeps this context.
 
 import copy
 import time
-
 from itertools import zip_longest
 from typing import List
 
 import numpy
-
-from qiskit.circuit.exceptions import CircuitError
-from qiskit.circuit.quantumregister import QuantumRegister
 from qiskit.circuit.classicalregister import ClassicalRegister, Clbit
+from qiskit.circuit.exceptions import CircuitError
+from qiskit.circuit.operation import Operation
+from qiskit.circuit.parameter import ParameterExpression
+from qiskit.circuit.quantumregister import QuantumRegister
 from qiskit.qasm.exceptions import QasmError
 from qiskit.qobj.qasm_qobj import QasmQobjInstruction
-from qiskit.circuit.parameter import ParameterExpression
-from qiskit.circuit.operation import Operation
+
 from .tools import pi_check
 
 _CUTOFF_PRECISION = 1e-10
@@ -261,7 +260,8 @@ class Instruction(Operation):
     def decompositions(self):
         """Get the decompositions of the instruction from the SessionEquivalenceLibrary."""
         # pylint: disable=cyclic-import
-        from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary as sel
+        from qiskit.circuit.equivalence_library import \
+            SessionEquivalenceLibrary as sel
 
         return sel.get_entry(self)
 
@@ -269,14 +269,16 @@ class Instruction(Operation):
     def decompositions(self, decompositions):
         """Set the decompositions of the instruction from the SessionEquivalenceLibrary."""
         # pylint: disable=cyclic-import
-        from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary as sel
+        from qiskit.circuit.equivalence_library import \
+            SessionEquivalenceLibrary as sel
 
         sel.set_entry(self, decompositions)
 
     def add_decomposition(self, decomposition):
         """Add a decomposition of the instruction to the SessionEquivalenceLibrary."""
         # pylint: disable=cyclic-import
-        from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary as sel
+        from qiskit.circuit.equivalence_library import \
+            SessionEquivalenceLibrary as sel
 
         sel.add_equivalence(self, decomposition)
 
@@ -533,7 +535,7 @@ class Instruction(Operation):
 
         if instruction.definition is None:
             # pylint: disable=cyclic-import
-            from qiskit.circuit import QuantumCircuit, CircuitInstruction
+            from qiskit.circuit import CircuitInstruction, QuantumCircuit
 
             qc = QuantumCircuit()
             if qargs:

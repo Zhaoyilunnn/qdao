@@ -11,19 +11,18 @@
 # that they have been altered from the originals.
 """Prepare a quantum state from the state where all qubits are 0."""
 
-from typing import Union, Optional
-
 import math
-import numpy as np
+from typing import Optional, Union
 
-from qiskit.exceptions import QiskitError
+import numpy as np
 from qiskit.circuit import QuantumCircuit, QuantumRegister, Qubit
-from qiskit.circuit.library.standard_gates.x import CXGate, XGate
+from qiskit.circuit.exceptions import CircuitError
 from qiskit.circuit.library.standard_gates.h import HGate
-from qiskit.circuit.library.standard_gates.s import SGate, SdgGate
 from qiskit.circuit.library.standard_gates.ry import RYGate
 from qiskit.circuit.library.standard_gates.rz import RZGate
-from qiskit.circuit.exceptions import CircuitError
+from qiskit.circuit.library.standard_gates.s import SdgGate, SGate
+from qiskit.circuit.library.standard_gates.x import CXGate, XGate
+from qiskit.exceptions import QiskitError
 from qiskit.quantum_info import Statevector
 
 from qdao.qiskit.gate import Gate

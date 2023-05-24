@@ -1,6 +1,7 @@
 from typing import List, Optional
+
 import numpy as np
-from qiskit.circuit import QuantumCircuit, CircuitInstruction
+from qiskit.circuit import CircuitInstruction, QuantumCircuit
 
 from .initializer import initialize
 
@@ -77,6 +78,7 @@ class QiskitCircuitHelper:
             raise ValueError("Please set self._circ")
 
         from qdao.circuit import QdaoCircuit
+
         # 1. Get the set of qubits
         qset = set(range(num_local))
         for instr in instrs:

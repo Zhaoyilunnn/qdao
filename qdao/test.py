@@ -1,7 +1,7 @@
-from typing import Any, Tuple
-import numpy as np
-
 from test.base import BaseTest
+from typing import Any, Tuple
+
+import numpy as np
 from qiskit.quantum_info.states import Statevector
 
 

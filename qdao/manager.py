@@ -1,16 +1,18 @@
 import concurrent.futures
-import os
 import logging
 import multiprocessing as mp
-import numpy as np
-
+import os
 from threading import Thread
 from typing import List
 
-from qdao.util import *
-from qdao.executor import AsyncIoExecutor, BatchParallelExecutor, ConstantPoolParallelExecutor, ParallelExecutor, PoolParallelExecutor
-
+import numpy as np
 from utils.misc import print_statistics, time_it
+
+from qdao.executor import (AsyncIoExecutor, BatchParallelExecutor,
+                           ConstantPoolParallelExecutor, ParallelExecutor,
+                           PoolParallelExecutor)
+from qdao.util import *
+
 
 class SvManager:
     """Statevector data access manager"""

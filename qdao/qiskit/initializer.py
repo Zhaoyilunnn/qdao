@@ -14,16 +14,14 @@
 Initialize qubit registers to desired arbitrary state.
 """
 import numpy as np
-
-from qiskit.circuit import QuantumCircuit
-from qiskit.circuit import QuantumRegister
 # FIXME: Used modified instruction
 #from qiskit.circuit import Instruction
-from qiskit.circuit import Qubit
+from qiskit.circuit import QuantumCircuit, QuantumRegister, Qubit
+from utils.misc import print_statistics, time_it
+
+from qdao.qiskit.circ_append import _append_init_sv, append_init_sv
 from qdao.qiskit.instruction import Instruction
 from qdao.qiskit.state_preparation import StatePreparation
-from qdao.qiskit.circ_append import append_init_sv, _append_init_sv
-from utils.misc import time_it, print_statistics
 
 _EPS = 1e-10  # global variable used to chop very small numbers to zero
 

@@ -3,12 +3,13 @@ Generate the walk-through example circuit
 Pleas run in qcs root directory
 """
 import sys
+
 sys.path.append(".")
 
 import matplotlib.pyplot as plt
 from qiskit import QuantumCircuit
-from qdao.engine import Engine
 
+from qdao.engine import Engine
 
 if __name__ == '__main__':
     #circ_path = "qdao/benchmarks/qasm/random_8_5_max_operands_2_gen.qasm"

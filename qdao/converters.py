@@ -1,8 +1,8 @@
 """Converters that convert np.array to statevector objects of other frameworks"""
 
 import numpy as np
-
 from qiskit.quantum_info.states import Statevector
+
 
 class BaseConverter:
 

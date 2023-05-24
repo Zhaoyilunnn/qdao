@@ -3,8 +3,8 @@ This module provides methods to partition original circuit
 into sub-circuits.
 """
 import logging
-
 from typing import Any, List
+
 from qdao.qiskit.circuit import QiskitCircuitHelper
 from qdao.quafu.circuit import QuafuCircuitHelper
 

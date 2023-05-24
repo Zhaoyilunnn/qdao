@@ -1,10 +1,9 @@
 import logging
-
 from typing import Optional
-import numpy as np
 
-from qiskit_aer import Aer
+import numpy as np
 from mqt import ddsim
+from qiskit_aer import Aer
 
 
 class QiskitSimulator:

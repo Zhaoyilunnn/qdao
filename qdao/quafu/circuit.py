@@ -1,14 +1,10 @@
+import copy
 import logging
+from typing import List, Optional
 
 import numpy as np
-import copy
-
-from typing import List, Optional
-from quafu.circuits.quantum_circuit import \
-        QuantumCircuit, \
-        QuantumGate, \
-        SingleQubitGate, \
-        ControlledGate
+from quafu.circuits.quantum_circuit import (ControlledGate, QuantumCircuit,
+                                            QuantumGate, SingleQubitGate)
 
 
 class QuafuCircuitHelper:
@@ -73,6 +69,7 @@ class QuafuCircuitHelper:
             raise ValueError("Please set self._circ")
 
         from qdao.circuit import QdaoCircuit
+
         # 1. Get the set of qubits
         qset = set(range(num_local))
         for instr in instrs:

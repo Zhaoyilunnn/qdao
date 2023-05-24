@@ -1,5 +1,4 @@
 import numpy as np
-
 from quafu.simulators.simulator import simulate
 
 

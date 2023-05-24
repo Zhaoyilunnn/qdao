@@ -15,36 +15,24 @@
 """Quantum circuit object."""
 
 import copy
-import itertools
 import functools
+import itertools
 import multiprocessing as mp
-import string
 import re
-from collections import OrderedDict, defaultdict, namedtuple
-from typing import (
-    Union,
-    Optional,
-    List,
-    Dict,
-    Tuple,
-    Type,
-    TypeVar,
-    Sequence,
-    Callable,
-    Mapping,
-    Set,
-    Iterable,
-)
+import string
 import typing
-from qiskit.circuit.instruction import Instruction
-from qiskit.circuit.parameter import Parameter
-from qiskit.circuit.exceptions import CircuitError
-from qiskit.circuit.quantumregister import QuantumRegister, Qubit
+from collections import OrderedDict, defaultdict, namedtuple
+from typing import (Callable, Dict, Iterable, List, Mapping, Optional,
+                    Sequence, Set, Tuple, Type, TypeVar, Union)
+
 from qiskit.circuit.classicalregister import ClassicalRegister, Clbit
+from qiskit.circuit.exceptions import CircuitError
+from qiskit.circuit.instruction import Instruction
 from qiskit.circuit.instructionset import InstructionSet
 from qiskit.circuit.operation import Operation
+from qiskit.circuit.parameter import Parameter
 from qiskit.circuit.quantumcircuitdata import CircuitInstruction
-
+from qiskit.circuit.quantumregister import QuantumRegister, Qubit
 
 # The following types are not marked private to avoid leaking this "private/public" abstraction out
 # into the documentation.  They are not imported by circuit.__init__, nor are they meant to be.
