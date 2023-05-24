@@ -15,12 +15,9 @@ class BaseConverter:
 
 class QiskitConverter(BaseConverter):
 
-    def __init__(
-            self,
-            sv: np.ndarray 
-        ) -> None:
+    def __init__(self, sv: np.ndarray) -> None:
         super().__init__()
         self._sv = sv
 
     def convert(self):
-        return Statevector(self._sv) 
+        return Statevector(self._sv)

@@ -133,7 +133,7 @@ def indexes(qubits, k):
         # that can be deduced from previous half
         n = BITS[i]
         # `bias`: index pattern repeat from bias + start
-        bias = BITS[qubits[i]];
+        bias = BITS[qubits[i]]
         for j in range(n):
             ret[n+j] = ret[j] | bias
 

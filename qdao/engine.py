@@ -16,24 +16,24 @@ class Engine:
     """Engine to execute a quantum circuit"""
 
     def __init__(
-            self,
-            partitioner: Optional[BasePartitioner] = None,
-            manager: Optional[SvManager] = None,
-            circuit: Any=None,
-            num_primary: int=4,
-            num_local: int=2,
-            is_parallel: bool=False,
-            backend="qiskit",
-            **backend_args
-        ) -> None:
+        self,
+        partitioner: Optional[BasePartitioner] = None,
+        manager: Optional[SvManager] = None,
+        circuit: Any=None,
+        num_primary: int=4,
+        num_local: int=2,
+        is_parallel: bool=False,
+        backend="qiskit",
+        **backend_args
+    ) -> None:
         if isinstance(partitioner, BasePartitioner):
             self._part = partitioner
         else:
             self._part = StaticPartitioner(
-                    np=num_primary,
-                    nl=num_local,
-                    backend=backend
-                )
+                np=num_primary,
+                nl=num_local,
+                backend=backend
+            )
 
         # Get circuit simulator
         self._sim = SimulatorProvider.get_simulator(backend, **backend_args)
@@ -68,10 +68,10 @@ class Engine:
 
     @time_it
     def _preprocess(
-            self,
-            sub_circ: QdaoCircuit,
-            ichunk: int
-        ):
+        self,
+        sub_circ: QdaoCircuit,
+        ichunk: int
+    ):
         """Preprocessing before running a sub-simulation
         Args:
             sub_circ (VirtualCircuit):
@@ -87,11 +87,11 @@ class Engine:
 
     @time_it
     def _postprocess(
-            self,
-            sub_circ: QdaoCircuit,
-            ichunk: int,
-            sv: np.ndarray
-        ) -> None:
+        self,
+        sub_circ: QdaoCircuit,
+        ichunk: int,
+        sv: np.ndarray
+    ) -> None:
         """Postprocessing after running a sub-simulation
         Args:
             sub_circ (VirtualCircuit):
@@ -104,10 +104,7 @@ class Engine:
         self._manager.store_sv(sub_circ.real_qubits)
 
     @time_it
-    def _run(
-            self,
-            sub_circ: QdaoCircuit,
-        ) -> None:
+    def _run(self, sub_circ: QdaoCircuit) -> None:
         """Run single sub-circuit
 
         Args:

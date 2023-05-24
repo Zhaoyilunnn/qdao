@@ -15,11 +15,13 @@ from utils.misc import print_statistics, time_it
 class SvManager:
     """Statevector data access manager"""
 
-    def __init__(self,
-                 num_qubits: int=6,
-                 num_primary: int=4,
-                 num_local: int=2,
-                 is_parallel: bool=False) -> None:
+    def __init__(
+        self,
+        num_qubits: int=6,
+        num_primary: int=4,
+        num_local: int=2,
+        is_parallel: bool=False
+    ) -> None:
         """
         Args:
             num_qubits (int): Number of qubits in the target circuit
@@ -74,9 +76,11 @@ class SvManager:
     def _num_primary_groups(self, num_lg: int):
         return 1 << (self._np - self._nl - num_lg)
 
-    def _get_start_group_id(self,
-                            num_primary_groups: int,
-                            chunk_idx: int):
+    def _get_start_group_id(
+            self,
+            num_primary_groups: int,
+            chunk_idx: int
+        ):
         return chunk_idx * num_primary_groups;
 
     def _init_single_su(self, i):

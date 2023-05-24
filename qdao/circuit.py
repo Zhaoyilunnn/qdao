@@ -12,10 +12,10 @@ from qdao.quafu.circuit import QuafuCircuitHelper
 class QdaoCircuit:
 
     def __init__(
-            self,
-            circ: Any,
-            real_qubits: List[int]
-        ) -> None:
+        self,
+        circ: Any,
+        real_qubits: List[int]
+    ) -> None:
         self._circ = circ
         self._real_qubits = real_qubits
 
@@ -36,11 +36,11 @@ class BasePartitioner:
     """ Base class of circuit partition """
 
     def __init__(
-            self,
-            np=4,
-            nl=2,
-            backend="qiskit"
-        ) -> None:
+        self,
+        np=4,
+        nl=2,
+        backend="qiskit"
+    ) -> None:
         self._np = np
         self._nl = nl
         self._circ_helper = CircuitHelperProvider.get_helper(backend)
@@ -82,10 +82,10 @@ class BaselinePartitioner(BasePartitioner):
         for instr in self._circ_helper.instructions:
             # Each instruction forms a new sub-circuit
             sub_circ = self._circ_helper.gen_sub_circ(
-                            [instr],
-                            self._nl,
-                            self._np
-                        )
+                [instr],
+                self._nl,
+                self._np
+            )
             sub_circs.append(sub_circ)
             logging.info("Find sub-circuit: {}, qubits: {}".format(sub_circ.circ, qset))
 
@@ -116,10 +116,10 @@ class StaticPartitioner(BasePartitioner):
                 instrs.append(instr)
             else:
                 sub_circ = self._circ_helper.gen_sub_circ(
-                                instrs,
-                                self._nl,
-                                self._np
-                            )
+                    instrs,
+                    self._nl,
+                    self._np
+                )
                 sub_circs.append(sub_circ)
                 logging.info("Find sub-circuit: {}, qubits: {}".format(sub_circ.circ, qset))
                 # FIXME: Here the instr's qubits size may exceed
@@ -128,10 +128,10 @@ class StaticPartitioner(BasePartitioner):
                 qset = qs
         if instrs:
             sub_circ = self._circ_helper.gen_sub_circ(
-                            instrs,
-                            self._nl,
-                            self._np
-                        )
+                instrs,
+                self._nl,
+                self._np
+            )
             sub_circs.append(sub_circ)
 
         return sub_circs

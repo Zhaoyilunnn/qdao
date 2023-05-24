@@ -7,10 +7,10 @@ from qdao.quafu.simulator import QuafuSimulator
 class QdaoSimObj:
 
     def __init__(
-            self,
-            *objs,
-            **options
-        ) -> None:
+        self,
+        *objs,
+        **options
+    ) -> None:
         self._objs = objs
         self._circ = objs[-1]
         self._run_options = options
