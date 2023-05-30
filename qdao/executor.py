@@ -28,12 +28,12 @@ class BatchParallelExecutor:
 
     def execute(self, func, args_list):
 
-        CPU_CNT = mp.cpu_count()
+        cpu_cnt = mp.cpu_count()
 
         def split_list(lst, size):
             return [lst[i:i+size] for i in range(0, len(lst), size)]
 
-        args_lists = split_list(args_list, CPU_CNT)
+        args_lists = split_list(args_list, cpu_cnt)
 
         for args_lst in args_lists:
             threads = [Thread(target=func, args=args) for args in args_lst]
