@@ -3,16 +3,16 @@ import logging
 from typing import List, Optional
 
 import numpy as np
-from quafu.circuits.quantum_circuit import (ControlledGate, QuantumCircuit,
-                                            QuantumGate, SingleQubitGate)
+from quafu.circuits.quantum_circuit import (
+    ControlledGate,
+    QuantumCircuit,
+    QuantumGate,
+    SingleQubitGate,
+)
 
 
 class QuafuCircuitHelper:
-
-    def __init__(
-            self,
-            circ: Optional[QuantumCircuit]=None
-        ) -> None:
+    def __init__(self, circ: Optional[QuantumCircuit] = None) -> None:
         self._circ = circ or None
 
     @property
@@ -46,16 +46,12 @@ class QuafuCircuitHelper:
 
     def init_circ_from_sv(self, sv: np.ndarray):
         from qdao.simulator import QdaoSimObj
+
         if not isinstance(self._circ, QuantumCircuit):
             raise ValueError("Please set circ")
         return QdaoSimObj(sv, self._circ)
 
-    def gen_sub_circ(
-            self,
-            instrs: List[QuantumGate],
-            num_local: int,
-            num_primary: int
-        ):
+    def gen_sub_circ(self, instrs: List[QuantumGate], num_local: int, num_primary: int):
         """Generate a sub circuit based on a list of circuit instructions
         We assume there's no conditional instructions and no measurement
         instructions
@@ -82,10 +78,7 @@ class QuafuCircuitHelper:
 
         assert len(real_qubits) <= num_primary
 
-        qubit_map = {
-            q: i
-            for i, q in enumerate(real_qubits)
-        }
+        qubit_map = {q: i for i, q in enumerate(real_qubits)}
 
         for instr in instrs:
             new_instr = copy.deepcopy(instr)
@@ -101,8 +94,10 @@ class QuafuCircuitHelper:
 
             new_instr.pos = new_pos
             sub_circ.add_gate(new_instr)
-            logging.debug("New_instr::pos::{}, real_qubits::{}".format(new_pos, real_qubits))
+            logging.debug(
+                "New_instr::pos::{}, real_qubits::{}".format(new_pos, real_qubits)
+            )
 
-        #logging.debug(sub_circ.draw_circuit())
+        # logging.debug(sub_circ.draw_circuit())
         logging.info("\nGenerated sub-circ, real_qubits::{}".format(real_qubits))
         return QdaoCircuit(sub_circ, real_qubits)

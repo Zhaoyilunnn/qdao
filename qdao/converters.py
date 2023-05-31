@@ -5,7 +5,6 @@ from qiskit.quantum_info.states import Statevector
 
 
 class BaseConverter:
-
     def __init__(self) -> None:
         pass
 
@@ -14,7 +13,6 @@ class BaseConverter:
 
 
 class QiskitConverter(BaseConverter):
-
     def __init__(self, sv: np.ndarray) -> None:
         super().__init__()
         self._sv = sv

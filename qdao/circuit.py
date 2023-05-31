@@ -10,12 +10,7 @@ from qdao.quafu.circuit import QuafuCircuitHelper
 
 
 class QdaoCircuit:
-
-    def __init__(
-        self,
-        circ: Any,
-        real_qubits: List[int]
-    ) -> None:
+    def __init__(self, circ: Any, real_qubits: List[int]) -> None:
         self._circ = circ
         self._real_qubits = real_qubits
 
@@ -33,14 +28,9 @@ class QdaoCircuit:
 
 
 class BasePartitioner:
-    """ Base class of circuit partition """
+    """Base class of circuit partition"""
 
-    def __init__(
-        self,
-        np=4,
-        nl=2,
-        backend="qiskit"
-    ) -> None:
+    def __init__(self, np=4, nl=2, backend="qiskit") -> None:
         self._np = np
         self._nl = nl
         self._circ_helper = CircuitHelperProvider.get_helper(backend)
@@ -62,17 +52,15 @@ class BasePartitioner:
         self._nl = n
 
     def run(self, circuit: Any) -> List[QdaoCircuit]:
-
         sub_circs = []
 
         return sub_circs
 
 
 class BaselinePartitioner(BasePartitioner):
-    """ This mimic the naive implementation """
+    """This mimic the naive implementation"""
 
     def run(self, circuit: Any) -> List[QdaoCircuit]:
-
         # Set cicuit of circuit helper
         self._circ_helper.circ = circuit
 
@@ -81,11 +69,7 @@ class BaselinePartitioner(BasePartitioner):
         qset = set()
         for instr in self._circ_helper.instructions:
             # Each instruction forms a new sub-circuit
-            sub_circ = self._circ_helper.gen_sub_circ(
-                [instr],
-                self._nl,
-                self._np
-            )
+            sub_circ = self._circ_helper.gen_sub_circ([instr], self._nl, self._np)
             sub_circs.append(sub_circ)
             logging.info("Find sub-circuit: {}, qubits: {}".format(sub_circ.circ, qset))
 
@@ -93,11 +77,9 @@ class BaselinePartitioner(BasePartitioner):
 
 
 class StaticPartitioner(BasePartitioner):
-    """ Static partitioner which traverse the operations in original order """
-
+    """Static partitioner which traverse the operations in original order"""
 
     def run(self, circuit: Any) -> List[QdaoCircuit]:
-
         # Set cicuit of circuit helper
         self._circ_helper.circ = circuit
 
@@ -115,56 +97,39 @@ class StaticPartitioner(BasePartitioner):
                 qset = qset | qs
                 instrs.append(instr)
             else:
-                sub_circ = self._circ_helper.gen_sub_circ(
-                    instrs,
-                    self._nl,
-                    self._np
-                )
+                sub_circ = self._circ_helper.gen_sub_circ(instrs, self._nl, self._np)
                 sub_circs.append(sub_circ)
-                logging.info("Find sub-circuit: {}, qubits: {}".format(sub_circ.circ, qset))
+                logging.info(
+                    "Find sub-circuit: {}, qubits: {}".format(sub_circ.circ, qset)
+                )
                 # FIXME: Here the instr's qubits size may exceed
                 # (self._np - self._nl)
                 instrs = [instr]
                 qset = qs
         if instrs:
-            sub_circ = self._circ_helper.gen_sub_circ(
-                instrs,
-                self._nl,
-                self._np
-            )
+            sub_circ = self._circ_helper.gen_sub_circ(instrs, self._nl, self._np)
             sub_circs.append(sub_circ)
 
         return sub_circs
 
 
-PARTITIONERS = {
-    "baseline": BaselinePartitioner,
-    "static": StaticPartitioner
-}
+PARTITIONERS = {"baseline": BaselinePartitioner, "static": StaticPartitioner}
 
 
-INITIALIZERS = {
-    "qiskit": QiskitCircuitHelper,
-    "quafu": QuafuCircuitHelper
-}
+INITIALIZERS = {"qiskit": QiskitCircuitHelper, "quafu": QuafuCircuitHelper}
 
 
 class PartitionerProvider:
-
     @classmethod
     def get_partitioner(
-            cls,
-            part_name: str,
-            **configs,
-        ):
+        cls,
+        part_name: str,
+        **configs,
+    ):
         return PARTITIONERS[part_name](**configs)
 
-class CircuitHelperProvider:
 
+class CircuitHelperProvider:
     @classmethod
-    def get_helper(
-            cls,
-            backend_name: str,
-            **props
-        ):
+    def get_helper(cls, backend_name: str, **props):
         return INITIALIZERS[backend_name](**props)

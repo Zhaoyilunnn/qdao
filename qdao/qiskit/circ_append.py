@@ -22,8 +22,20 @@ import re
 import string
 import typing
 from collections import OrderedDict, defaultdict, namedtuple
-from typing import (Callable, Dict, Iterable, List, Mapping, Optional,
-                    Sequence, Set, Tuple, Type, TypeVar, Union)
+from typing import (
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
 
 from qiskit.circuit.classicalregister import ClassicalRegister, Clbit
 from qiskit.circuit.exceptions import CircuitError
@@ -104,14 +116,13 @@ def _append_init_sv(self, instruction, qargs=None, cargs=None):
 
     # FIXME: No need to do so when appending initializing
     # statevector instruction
-    #if isinstance(instruction.operation, Instruction):
+    # if isinstance(instruction.operation, Instruction):
     #    self._update_parameter_table(instruction)
 
     # mark as normal circuit if a new instruction is added
     self.duration = None
     self.unit = "dt"
     return instruction.operation if old_style else instruction
-
 
 
 def append_init_sv(
@@ -152,7 +163,9 @@ def append_init_sv(
     else:
         operation = instruction
     # Convert input to instruction
-    if not isinstance(operation, Operation) and not hasattr(operation, "to_instruction"):
+    if not isinstance(operation, Operation) and not hasattr(
+        operation, "to_instruction"
+    ):
         if issubclass(operation, Operation):
             raise CircuitError(
                 "Object is a subclass of Operation, please add () to "
@@ -169,7 +182,7 @@ def append_init_sv(
 
     # FIXME: No use when initializing statevector
     ## Make copy of parameterized gate instances
-    #if hasattr(operation, "params"):
+    # if hasattr(operation, "params"):
     #    is_parameter = any(isinstance(param, Parameter) for param in operation.params)
     #    if is_parameter:
     #        operation = copy.deepcopy(operation)
@@ -200,4 +213,3 @@ def append_init_sv(
             appender(instruction)
             instructions.add(instruction)
     return instructions
-

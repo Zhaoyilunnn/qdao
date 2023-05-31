@@ -68,10 +68,12 @@ class Gate(Instruction):
         Raises:
             CircuitError: If Gate is not unitary
         """
-        from qiskit.extensions.unitary import \
-            UnitaryGate  # pylint: disable=cyclic-import
-        from qiskit.quantum_info.operators import \
-            Operator  # pylint: disable=cyclic-import
+        from qiskit.extensions.unitary import (
+            UnitaryGate,
+        )  # pylint: disable=cyclic-import
+        from qiskit.quantum_info.operators import (
+            Operator,
+        )  # pylint: disable=cyclic-import
         from scipy.linalg import schur
 
         # Should be diagonalized because it's a unitary.
@@ -91,7 +93,11 @@ class Gate(Instruction):
         return UnitaryGate(unitary_power, label=f"{self.name}^{exponent}")
 
     def _return_repeat(self, exponent: float) -> "Gate":
-        return Gate(name=f"{self.name}*{exponent}", num_qubits=self.num_qubits, params=self.params)
+        return Gate(
+            name=f"{self.name}*{exponent}",
+            num_qubits=self.num_qubits,
+            params=self.params,
+        )
 
     def control(
         self,
@@ -159,7 +165,9 @@ class Gate(Instruction):
             for arg in zip(*qargs):
                 yield list(arg), []
         else:
-            raise CircuitError("Not sure how to combine these qubit arguments:\n %s\n" % qargs)
+            raise CircuitError(
+                "Not sure how to combine these qubit arguments:\n %s\n" % qargs
+            )
 
     def broadcast_arguments(self, qargs: List, cargs: List) -> Tuple[List, List]:
         """Validation and handling of the arguments and its relationship.
@@ -220,7 +228,9 @@ class Gate(Instruction):
         """Gate parameters should be int, float, or ParameterExpression"""
         if isinstance(parameter, ParameterExpression):
             if len(parameter.parameters) > 0:
-                return parameter  # expression has free parameters, we cannot validate it
+                return (
+                    parameter  # expression has free parameters, we cannot validate it
+                )
             if not parameter.is_real():
                 msg = f"Bound parameter expression is complex in gate {self.name}"
                 raise CircuitError(msg)
@@ -230,4 +240,6 @@ class Gate(Instruction):
         elif isinstance(parameter, (np.integer, np.floating)):
             return parameter.item()
         else:
-            raise CircuitError(f"Invalid param type {type(parameter)} for gate {self.name}.")
+            raise CircuitError(
+                f"Invalid param type {type(parameter)} for gate {self.name}."
+            )

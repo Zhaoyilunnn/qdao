@@ -3,20 +3,16 @@ from quafu.simulators.simulator import simulate
 
 
 class QuafuSimulator:
-
     def __init__(self) -> None:
         pass
 
     def run(self, simobj) -> np.ndarray:
-
         sv = simulate(
-                simobj.circ,
-                psi=simobj.objs[0],
-                output="state_vector"
-            ).get_statevector()
+            simobj.circ, psi=simobj.objs[0], output="state_vector"
+        ).get_statevector()
 
         # FIXME: Quafu will return sv less than QuantumCircuit size
-        expected_sv_size = 1<<simobj.circ.num
+        expected_sv_size = 1 << simobj.circ.num
         if sv.shape[0] < expected_sv_size:
             assert expected_sv_size % sv.shape[0] == 0
 

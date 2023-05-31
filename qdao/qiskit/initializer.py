@@ -14,8 +14,9 @@
 Initialize qubit registers to desired arbitrary state.
 """
 import numpy as np
+
 # FIXME: Used modified instruction
-#from qiskit.circuit import Instruction
+# from qiskit.circuit import Instruction
 from qiskit.circuit import QuantumCircuit, QuantumRegister, Qubit
 from utils.misc import print_statistics, time_it
 
@@ -61,7 +62,9 @@ class Initialize(Instruction):
         """
         self._stateprep = StatePreparation(params, num_qubits)
 
-        super().__init__("initialize", self._stateprep.num_qubits, 0, self._stateprep.params)
+        super().__init__(
+            "initialize", self._stateprep.num_qubits, 0, self._stateprep.params
+        )
 
     def _define(self):
         q = QuantumRegister(self.num_qubits, "q")

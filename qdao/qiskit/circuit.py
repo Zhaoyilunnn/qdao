@@ -7,12 +7,9 @@ from .initializer import initialize
 
 QuantumCircuit.initialize = initialize
 
-class QiskitCircuitHelper:
 
-    def __init__(
-            self,
-            circ: Optional[QuantumCircuit]=None
-        ) -> None:
+class QiskitCircuitHelper:
+    def __init__(self, circ: Optional[QuantumCircuit] = None) -> None:
         self._circ = circ or None
 
     @property
@@ -49,22 +46,20 @@ class QiskitCircuitHelper:
                init from statevector at the begining
         """
         from qdao.simulator import QdaoSimObj
+
         if not isinstance(self._circ, QuantumCircuit):
             raise ValueError("Please set circ before initializing from sv!")
 
         nq = self._circ.num_qubits
         circ = QuantumCircuit(nq)
-        #FIXME: To test the performance of qiskit, do not initialize
-        #circ.initialize(sv, range(nq))
+        # FIXME: To test the performance of qiskit, do not initialize
+        # circ.initialize(sv, range(nq))
         circ.compose(self._circ, inplace=True)
         return QdaoSimObj(sv, circ)
 
     def gen_sub_circ(
-            self,
-            instrs: List[CircuitInstruction],
-            num_local: int,
-            num_primary: int
-        ):
+        self, instrs: List[CircuitInstruction], num_local: int, num_primary: int
+    ):
         """Generate a sub circuit based on a list of circuit instructions
         We assume there's no conditional instructions and no measurement
         instructions
@@ -92,14 +87,15 @@ class QiskitCircuitHelper:
         assert len(real_qubits) <= num_primary
 
         qubit_map = {
-            self._circ.qubits[q]: sub_circ.qubits[i]
-            for i, q in enumerate(real_qubits)
+            self._circ.qubits[q]: sub_circ.qubits[i] for i, q in enumerate(real_qubits)
         }
 
         for instr in instrs:
             op = instr.operation.copy()
             if len(instr.clbits) > 0:
-                raise NotImplementedError("Currently not support measure/control operations")
+                raise NotImplementedError(
+                    "Currently not support measure/control operations"
+                )
             qubits = [qubit_map[q] for q in instr.qubits]
             sub_instr = CircuitInstruction(op, qubits=qubits)
             sub_circ.append(sub_instr)
