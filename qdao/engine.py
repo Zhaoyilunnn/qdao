@@ -3,7 +3,7 @@ from time import time
 from typing import Any, Optional
 
 import numpy as np
-from utils.misc import print_statistics, time_it
+from qutils.misc import print_statistics, time_it
 
 from qdao.circuit import (
     BasePartitioner,

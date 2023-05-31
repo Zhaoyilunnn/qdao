@@ -18,7 +18,7 @@ import numpy as np
 # FIXME: Used modified instruction
 # from qiskit.circuit import Instruction
 from qiskit.circuit import QuantumCircuit, QuantumRegister, Qubit
-from utils.misc import print_statistics, time_it
+from qutils.misc import print_statistics, time_it
 
 from qdao.qiskit.circ_append import _append_init_sv, append_init_sv
 from qdao.qiskit.instruction import Instruction

@@ -6,7 +6,7 @@ from threading import Thread
 from typing import List
 
 import numpy as np
-from utils.misc import print_statistics, time_it
+from qutils.misc import print_statistics, time_it
 
 from qdao.executor import (
     AsyncIoExecutor,
