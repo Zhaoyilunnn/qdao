@@ -3,7 +3,7 @@ from time import time
 from typing import Any, Optional
 
 import numpy as np
-from qutils.misc import print_statistics, time_it
+#from qutils.misc import print_statistics, time_it
 
 from qdao.circuit import (
     BasePartitioner,
@@ -68,7 +68,7 @@ class Engine:
     def num_chunks(self):
         return self._num_chunks
 
-    @time_it
+    #@time_it
     def _preprocess(self, sub_circ: QdaoCircuit, ichunk: int):
         """Preprocessing before running a sub-simulation
         Args:
@@ -83,7 +83,7 @@ class Engine:
         self._circ_helper.circ = sub_circ.circ
         return self._circ_helper.init_circ_from_sv(sv)
 
-    @time_it
+    #@time_it
     def _postprocess(self, sub_circ: QdaoCircuit, ichunk: int, sv: np.ndarray) -> None:
         """Postprocessing after running a sub-simulation
         Args:
@@ -96,7 +96,7 @@ class Engine:
         self._manager.chunk = sv
         self._manager.store_sv(sub_circ.real_qubits)
 
-    @time_it
+    #@time_it
     def _run(self, sub_circ: QdaoCircuit) -> None:
         """Run single sub-circuit
 
@@ -138,7 +138,7 @@ class Engine:
     #    print(sv_res)
     #    assert sv.equiv(sv_res)
 
-    @time_it
+    #@time_it
     def _initialize(self):
         """
         Init storage units to "|000...0>"
@@ -160,4 +160,4 @@ class Engine:
             # self.debug(sub_circ)
 
 
-Engine.print_statistics = print_statistics
+#Engine.print_statistics = print_statistics

@@ -6,7 +6,7 @@ from threading import Thread
 from typing import List
 
 import numpy as np
-from qutils.misc import print_statistics, time_it
+#from qutils.misc import print_statistics, time_it
 
 from qdao.executor import (
     AsyncIoExecutor,
@@ -93,7 +93,7 @@ class SvManager:
         fn = generate_secondary_file_name(i)
         np.save(fn, su)
 
-    @time_it
+    #@time_it
     def initialize(self):
         # Calc number of storage units
         num_sus = 1 << (self._nq - self._nl)
@@ -111,7 +111,7 @@ class SvManager:
         chk_end = (isub << self._nl) + (1 << self._nl)
         self._chunk[chk_start:chk_end] = vec
 
-    @time_it
+    #@time_it
     def load_sv(self, org_qubits: List[int]):
         """Load a `chunk` of statevector into memory
         Reference: sim-beta/statevector/src/statevector.cpp
@@ -164,7 +164,7 @@ class SvManager:
         chk_end = (isub << self._nl) + (1 << self._nl)
         np.save(fn, self._chunk[chk_start:chk_end])
 
-    @time_it
+    #@time_it
     def store_sv(self, org_qubits: List[int]):
         # if len(org_qubits) <= self._nl:
         if len(org_qubits) < self._nl:
@@ -264,4 +264,4 @@ class SvManager:
     #            pass
 
 
-SvManager.print_statistics = print_statistics
+#SvManager.print_statistics = print_statistics

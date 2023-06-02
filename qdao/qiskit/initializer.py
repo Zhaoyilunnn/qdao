@@ -18,7 +18,7 @@ import numpy as np
 # FIXME: Used modified instruction
 # from qiskit.circuit import Instruction
 from qiskit.circuit import QuantumCircuit, QuantumRegister, Qubit
-from qutils.misc import print_statistics, time_it
+#from qutils.misc import print_statistics, time_it
 
 from qdao.qiskit.circ_append import _append_init_sv, append_init_sv
 from qdao.qiskit.instruction import Instruction
@@ -95,7 +95,7 @@ class Initialize(Instruction):
         return self._stateprep.broadcast_arguments(qargs, cargs)
 
 
-@time_it
+#@time_it
 def initialize(self, params, qubits=None):
     r"""Initialize qubits in a specific state.
 
@@ -201,4 +201,4 @@ def initialize(self, params, qubits=None):
 
 
 QuantumCircuit.initialize = initialize
-QuantumCircuit.print_statistics = print_statistics
+#QuantumCircuit.print_statistics = print_statistics
