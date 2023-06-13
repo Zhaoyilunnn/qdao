@@ -6,7 +6,7 @@ import numpy as np
 from utils.misc import print_statistics, time_it
 
 from qdao.circuit import (BasePartitioner, CircuitHelperProvider, QdaoCircuit,
-                          StaticPartitioner)
+                        StaticPartitioner)
 from qdao.manager import SvManager
 from qdao.simulator import SimulatorProvider
 from qdao.util import generate_secondary_file_name
