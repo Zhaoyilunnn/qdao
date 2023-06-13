@@ -10,14 +10,6 @@ from quafu.circuits.quantum_circuit import (
     SingleQubitGate,
 )
 
-# ControlledGate,QuantumGate, SingleQubitGate all from quafu.elements.quantum_element
-# QuantumCircuit from quafu.circuits.quantum_circuit
-
-# ControlledGate,QuantumGate, SingleQubitGate all from quafu.elements.quantum_element
-# QuantumCircuit from quafu.circuits.quantum_circuit
-
-# ControlledGate,QuantumGate, SingleQubitGate all from quafu.elements.quantum_element
-# QuantumCircuit from quafu.circuits.quantum_circuit
 
 
 class QuafuCircuitHelper:

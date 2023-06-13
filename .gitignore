@@ -17,3 +17,5 @@ sim-beta/compile_commands.json
 *dist
 *egg-info
 *build
+*ipynb
+*_study.py
