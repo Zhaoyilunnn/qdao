@@ -81,7 +81,9 @@ class StatePreparation(Gate):
         self._name = "state_preparation_dg" if self._inverse else "state_preparation"
 
         if label is None:
-            self._label = "State Preparation Dg" if self._inverse else "State Preparation"
+            self._label = (
+                "State Preparation Dg" if self._inverse else "State Preparation"
+            )
         else:
             self._label = f"{label} Dg" if self._inverse else label
 
@@ -195,11 +197,13 @@ class StatePreparation(Gate):
 
             # Check if param is a power of 2
             if num_qubits == 0 or not num_qubits.is_integer():
-                raise QiskitError("Desired statevector length not a positive power of 2.")
+                raise QiskitError(
+                    "Desired statevector length not a positive power of 2."
+                )
 
             # FIXME: We need partial initialization and we suppress this
             ## Check if probabilities (amplitudes squared) sum to 1
-            #if not math.isclose(sum(np.absolute(params) ** 2), 1.0, abs_tol=_EPS):
+            # if not math.isclose(sum(np.absolute(params) ** 2), 1.0, abs_tol=_EPS):
             #    raise QiskitError("Sum of amplitudes-squared does not equal one.")
 
             num_qubits = int(num_qubits)
@@ -209,10 +213,14 @@ class StatePreparation(Gate):
         """Return inverted StatePreparation"""
 
         label = (
-            None if self._label in ("State Preparation", "State Preparation Dg") else self._label
+            None
+            if self._label in ("State Preparation", "State Preparation Dg")
+            else self._label
         )
 
-        return StatePreparation(self._params_arg, inverse=not self._inverse, label=label)
+        return StatePreparation(
+            self._params_arg, inverse=not self._inverse, label=label
+        )
 
     def broadcast_arguments(self, qargs, cargs):
         flat_qargs = [qarg for sublist in qargs for qarg in sublist]
@@ -243,10 +251,14 @@ class StatePreparation(Gate):
         elif isinstance(parameter, np.number):
             return complex(parameter.item())
         else:
-            raise CircuitError(f"invalid param type {type(parameter)} for instruction  {self.name}")
+            raise CircuitError(
+                f"invalid param type {type(parameter)} for instruction  {self.name}"
+            )
 
     def _return_repeat(self, exponent: float) -> "Gate":
-        return Gate(name=f"{self.name}*{exponent}", num_qubits=self.num_qubits, params=[])
+        return Gate(
+            name=f"{self.name}*{exponent}", num_qubits=self.num_qubits, params=[]
+        )
 
     def _gates_to_uncompute(self):
         """Call to create a circuit with gates that take the desired vector to zero.
@@ -263,9 +275,11 @@ class StatePreparation(Gate):
         for i in range(self.num_qubits):
             # work out which rotations must be done to disentangle the LSB
             # qubit (we peel away one qubit at a time)
-            (remaining_param, thetas, phis) = StatePreparation._rotations_to_disentangle(
-                remaining_param
-            )
+            (
+                remaining_param,
+                thetas,
+                phis,
+            ) = StatePreparation._rotations_to_disentangle(remaining_param)
 
             # perform the required rotations to decouple the LSB qubit (so that
             # it can be "factored" out, leaving a shorter amplitude vector to peel away)
@@ -280,7 +294,9 @@ class StatePreparation(Gate):
 
             if np.linalg.norm(thetas) != 0:
                 ry_mult = self._multiplex(RYGate, thetas, last_cnot=add_last_cnot)
-                circuit.append(ry_mult.to_instruction().reverse_ops(), q[i : self.num_qubits])
+                circuit.append(
+                    ry_mult.to_instruction().reverse_ops(), q[i : self.num_qubits]
+                )
         circuit.global_phase -= np.angle(sum(remaining_param))
         return circuit
 
@@ -382,13 +398,17 @@ class StatePreparation(Gate):
 
         # calc angle weights, assuming recursion (that is the lower-level
         # requested angles have been correctly implemented by recursion
-        angle_weight = np.kron([[0.5, 0.5], [0.5, -0.5]], np.identity(2 ** (local_num_qubits - 2)))
+        angle_weight = np.kron(
+            [[0.5, 0.5], [0.5, -0.5]], np.identity(2 ** (local_num_qubits - 2))
+        )
 
         # calc the combo angles
         list_of_angles = angle_weight.dot(np.array(list_of_angles)).tolist()
 
         # recursive step on half the angles fulfilling the above assumption
-        multiplex_1 = self._multiplex(target_gate, list_of_angles[0 : (list_len // 2)], False)
+        multiplex_1 = self._multiplex(
+            target_gate, list_of_angles[0 : (list_len // 2)], False
+        )
         circuit.append(multiplex_1.to_instruction(), q[0:-1])
 
         # attach CNOT as follows, thereby flipping the LSB qubit
@@ -397,7 +417,9 @@ class StatePreparation(Gate):
         # implement extra efficiency from the paper of cancelling adjacent
         # CNOTs (by leaving out last CNOT and reversing (NOT inverting) the
         # second lower-level multiplex)
-        multiplex_2 = self._multiplex(target_gate, list_of_angles[(list_len // 2) :], False)
+        multiplex_2 = self._multiplex(
+            target_gate, list_of_angles[(list_len // 2) :], False
+        )
         if list_len > 1:
             circuit.append(multiplex_2.to_instruction().reverse_ops(), q[0:-1])
         else:

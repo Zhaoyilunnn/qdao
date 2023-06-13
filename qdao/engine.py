@@ -3,7 +3,7 @@ from time import time
 from typing import Any, Optional
 
 import numpy as np
-from utils.misc import print_statistics, time_it
+#from qutils.misc import print_statistics, time_it
 
 from qdao.circuit import (BasePartitioner, CircuitHelperProvider, QdaoCircuit,
                         StaticPartitioner)
@@ -19,10 +19,10 @@ class Engine:
         self,
         partitioner: Optional[BasePartitioner] = None,
         manager: Optional[SvManager] = None,
-        circuit: Any=None,
-        num_primary: int=4,
-        num_local: int=2,
-        is_parallel: bool=False,
+        circuit: Any = None,
+        num_primary: int = 4,
+        num_local: int = 2,
+        is_parallel: bool = False,
         backend="qiskit",
         **backend_args
     ) -> None:
@@ -30,9 +30,7 @@ class Engine:
             self._part = partitioner
         else:
             self._part = StaticPartitioner(
-                np=num_primary,
-                nl=num_local,
-                backend=backend
+                np=num_primary, nl=num_local, backend=backend
             )
 
         # Get circuit simulator
@@ -53,25 +51,21 @@ class Engine:
                 num_qubits=self._nq,
                 num_primary=num_primary,
                 num_local=num_local,
-                is_parallel=is_parallel
+                is_parallel=is_parallel,
             )
 
         self._np, self._nl = num_primary, num_local
         self._num_chunks = 1 << (self._nq - self._np)
 
-        #FIXME: Put initialize to run
-        #self._initialize()
+        # FIXME: Put initialize to run
+        # self._initialize()
 
     @property
     def num_chunks(self):
         return self._num_chunks
 
-    @time_it
-    def _preprocess(
-        self,
-        sub_circ: QdaoCircuit,
-        ichunk: int
-    ):
+    #@time_it
+    def _preprocess(self, sub_circ: QdaoCircuit, ichunk: int):
         """Preprocessing before running a sub-simulation
         Args:
             sub_circ (VirtualCircuit):
@@ -85,13 +79,8 @@ class Engine:
         self._circ_helper.circ = sub_circ.circ
         return self._circ_helper.init_circ_from_sv(sv)
 
-    @time_it
-    def _postprocess(
-        self,
-        sub_circ: QdaoCircuit,
-        ichunk: int,
-        sv: np.ndarray
-    ) -> None:
+    #@time_it
+    def _postprocess(self, sub_circ: QdaoCircuit, ichunk: int, sv: np.ndarray) -> None:
         """Postprocessing after running a sub-simulation
         Args:
             sub_circ (VirtualCircuit):
@@ -103,7 +92,7 @@ class Engine:
         self._manager.chunk = sv
         self._manager.store_sv(sub_circ.real_qubits)
 
-    @time_it
+    #@time_it
     def _run(self, sub_circ: QdaoCircuit) -> None:
         """Run single sub-circuit
 
@@ -116,11 +105,11 @@ class Engine:
             simobj = self._preprocess(sub_circ, ichunk)
             st = time()
             sv = self._sim.run(simobj)
-            assert sv.shape[0] == (1<<self._np)
+            assert sv.shape[0] == (1 << self._np)
             print("Partial simulation consumes time: {}".format(time() - st))
             self._postprocess(sub_circ, ichunk, sv)
 
-    #def debug(self, sub_circ: QdaoCircuit):
+    # def debug(self, sub_circ: QdaoCircuit):
     #    """
     #    After running a sub-circuit,
     #    test the result statevector is correct
@@ -145,7 +134,7 @@ class Engine:
     #    print(sv_res)
     #    assert sv.equiv(sv_res)
 
-    @time_it
+    #@time_it
     def _initialize(self):
         """
         Init storage units to "|000...0>"
@@ -164,6 +153,7 @@ class Engine:
         self._initialize()
         for sub_circ in sub_circs:
             self._run(sub_circ)
-            #self.debug(sub_circ)
+            # self.debug(sub_circ)
 
-Engine.print_statistics = print_statistics
+
+#Engine.print_statistics = print_statistics

@@ -78,7 +78,9 @@ def pi_check(inpt, eps=1e-6, output="text", ndigits=5):
         elif output == "mpl":
             pi = "$\\pi$"
         else:
-            raise QiskitError("pi_check parameter output should be text, latex, mpl, or qasm.")
+            raise QiskitError(
+                "pi_check parameter output should be text, latex, mpl, or qasm."
+            )
 
         neg_str = "-" if single_inpt < 0 else ""
 

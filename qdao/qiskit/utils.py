@@ -13,22 +13,46 @@
 """Utility functions for generating random circuits."""
 
 import numpy as np
-from qiskit.circuit import (ClassicalRegister, QuantumCircuit, QuantumRegister,
-                            Reset)
+from qiskit.circuit import ClassicalRegister, QuantumCircuit, QuantumRegister, Reset
 from qiskit.circuit.exceptions import CircuitError
-from qiskit.circuit.library.standard_gates import (CCXGate, CHGate, CRZGate,
-                                                   CSwapGate, CU1Gate, CU3Gate,
-                                                   CXGate, CYGate, CZGate,
-                                                   HGate, IGate, RXGate,
-                                                   RYGate, RZGate, RZZGate,
-                                                   SdgGate, SGate, SwapGate,
-                                                   TdgGate, TGate, U1Gate,
-                                                   U2Gate, U3Gate, XGate,
-                                                   YGate, ZGate)
+from qiskit.circuit.library.standard_gates import (
+    CCXGate,
+    CHGate,
+    CRZGate,
+    CSwapGate,
+    CU1Gate,
+    CU3Gate,
+    CXGate,
+    CYGate,
+    CZGate,
+    HGate,
+    IGate,
+    RXGate,
+    RYGate,
+    RZGate,
+    RZZGate,
+    SdgGate,
+    SGate,
+    SwapGate,
+    TdgGate,
+    TGate,
+    U1Gate,
+    U2Gate,
+    U3Gate,
+    XGate,
+    YGate,
+    ZGate,
+)
 
 
 def random_circuit(
-    num_qubits, depth, max_operands=3, measure=False, conditional=False, reset=False, seed=None
+    num_qubits,
+    depth,
+    max_operands=3,
+    measure=False,
+    conditional=False,
+    reset=False,
+    seed=None,
 ):
     """Generate random circuit of arbitrary size and form.
 

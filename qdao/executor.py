@@ -8,13 +8,11 @@ from typing import Optional
 
 
 class ParallelExecutor:
-
     def __init__(self, func, args) -> None:
         self._func = func
         self._args = args
 
     def execute(self):
-
         threads = [Thread(target=self._func, args=arg) for arg in self._args]
 
         for thread in threads:
@@ -25,13 +23,11 @@ class ParallelExecutor:
 
 
 class BatchParallelExecutor:
-
     def execute(self, func, args_list):
-
         cpu_cnt = mp.cpu_count()
 
         def split_list(lst, size):
-            return [lst[i:i+size] for i in range(0, len(lst), size)]
+            return [lst[i : i + size] for i in range(0, len(lst), size)]
 
         args_lists = split_list(args_list, cpu_cnt)
 
@@ -46,13 +42,12 @@ class BatchParallelExecutor:
 
 
 class PoolParallelExecutor:
-
-
     def execute(self, func, args_list):
-
         res = []
 
-        with concurrent.futures.ThreadPoolExecutor(max_workers=mp.cpu_count()) as executor:
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=mp.cpu_count()
+        ) as executor:
             res = []
             for args in args_list:
                 res.append(executor.submit(func, *args))
@@ -61,7 +56,7 @@ class PoolParallelExecutor:
                 try:
                     data = r.result()
                 except Exception as e:
-                    print(f'exception! {e}')
+                    print(f"exception! {e}")
 
 
 class ConstantPoolParallelExecutor:
@@ -74,7 +69,9 @@ class ConstantPoolParallelExecutor:
     CPU_CNT = mp.cpu_count()
 
     def _execute(self, func, args_list):
-        with concurrent.futures.ThreadPoolExecutor(max_workers=self.CPU_CNT) as executor:
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=self.CPU_CNT
+        ) as executor:
             res = []
             for args in args_list:
                 res.append(executor.submit(func, *args))
@@ -83,15 +80,13 @@ class ConstantPoolParallelExecutor:
                 try:
                     data = r.result()
                 except Exception as e:
-                    print(f'exception! {e}')
-
+                    print(f"exception! {e}")
 
     def execute(self, func, args_list):
-
         res = []
 
         def split_list(lst, size):
-            return [lst[i:i+size] for i in range(0, len(lst), size)]
+            return [lst[i : i + size] for i in range(0, len(lst), size)]
 
         args_lists = split_list(args_list, self.CPU_CNT)
 
@@ -114,7 +109,6 @@ class AsyncIoExecutor:
         func(*args)
 
     async def _execute_one_batch(self, func, args_list):
-
         tasks = []
 
         for args in args_list:

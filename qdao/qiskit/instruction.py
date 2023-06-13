@@ -57,7 +57,9 @@ class Instruction(Operation):
     # NOTE: Using this attribute may change in the future (See issue # 5811)
     _directive = False
 
-    def __init__(self, name, num_qubits, num_clbits, params, duration=None, unit="dt", label=None):
+    def __init__(
+        self, name, num_qubits, num_clbits, params, duration=None, unit="dt", label=None
+    ):
         """Create a new instruction.
 
         Args:
@@ -78,7 +80,8 @@ class Instruction(Operation):
             raise CircuitError("num_qubits and num_clbits must be integer.")
         if num_qubits < 0 or num_clbits < 0:
             raise CircuitError(
-                "bad instruction dimensions: %d qubits, %d clbits." % num_qubits, num_clbits
+                "bad instruction dimensions: %d qubits, %d clbits." % num_qubits,
+                num_clbits,
             )
         self._name = name
         self._num_qubits = num_qubits
@@ -103,7 +106,9 @@ class Instruction(Operation):
         self._duration = duration
         self._unit = unit
 
-        self.params = params  # must be at last (other properties may be required for validation)
+        self.params = (
+            params  # must be at last (other properties may be required for validation)
+        )
 
     def __eq__(self, other):
         """Two instructions are the same if they have the same name,
@@ -132,7 +137,9 @@ class Instruction(Operation):
                 pass
 
             try:
-                if numpy.shape(self_param) == numpy.shape(other_param) and numpy.allclose(
+                if numpy.shape(self_param) == numpy.shape(
+                    other_param
+                ) and numpy.allclose(
                     self_param, other_param, atol=_CUTOFF_PRECISION, rtol=0
                 ):
                     continue
@@ -141,7 +148,10 @@ class Instruction(Operation):
 
             try:
                 if numpy.isclose(
-                    float(self_param), float(other_param), atol=_CUTOFF_PRECISION, rtol=0
+                    float(self_param),
+                    float(other_param),
+                    atol=_CUTOFF_PRECISION,
+                    rtol=0,
                 ):
                     continue
             except TypeError:
@@ -187,10 +197,12 @@ class Instruction(Operation):
                 other_param, ParameterExpression
             ):
                 continue
-            if isinstance(self_param, numpy.ndarray) and isinstance(other_param, numpy.ndarray):
-                if numpy.shape(self_param) == numpy.shape(other_param) and numpy.allclose(
-                    self_param, other_param, atol=_CUTOFF_PRECISION
-                ):
+            if isinstance(self_param, numpy.ndarray) and isinstance(
+                other_param, numpy.ndarray
+            ):
+                if numpy.shape(self_param) == numpy.shape(
+                    other_param
+                ) and numpy.allclose(self_param, other_param, atol=_CUTOFF_PRECISION):
                     continue
             else:
                 try:
@@ -217,18 +229,18 @@ class Instruction(Operation):
         # FIXME: No need to
         # append one-by-one when setting statevector
         st = time.time()
-        #if isinstance(parameters, list):
+        # if isinstance(parameters, list):
         #    self._params = parameters
         #    return
-        #if not isinstance(parameters, numpy.ndarray):
+        # if not isinstance(parameters, numpy.ndarray):
         #    raise ValueError("For qdao, must initialize "\
         #            "from a statevector (np.numpy.ndarray)")
         ##self._params = list(parameters)
-        #self._params = parameters.tolist()
+        # self._params = parameters.tolist()
         self._params = parameters
         print("Time of setting params: {}".format(time.time() - st))
 
-        #for single_param in parameters:
+        # for single_param in parameters:
         #    if isinstance(single_param, ParameterExpression):
         #        self._params.append(single_param)
         #    else:
@@ -241,7 +253,8 @@ class Instruction(Operation):
     def is_parameterized(self):
         """Return True .IFF. instruction is parameterized else False"""
         return any(
-            isinstance(param, ParameterExpression) and param.parameters for param in self.params
+            isinstance(param, ParameterExpression) and param.parameters
+            for param in self.params
         )
 
     @property
@@ -260,8 +273,7 @@ class Instruction(Operation):
     def decompositions(self):
         """Get the decompositions of the instruction from the SessionEquivalenceLibrary."""
         # pylint: disable=cyclic-import
-        from qiskit.circuit.equivalence_library import \
-            SessionEquivalenceLibrary as sel
+        from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary as sel
 
         return sel.get_entry(self)
 
@@ -269,16 +281,14 @@ class Instruction(Operation):
     def decompositions(self, decompositions):
         """Set the decompositions of the instruction from the SessionEquivalenceLibrary."""
         # pylint: disable=cyclic-import
-        from qiskit.circuit.equivalence_library import \
-            SessionEquivalenceLibrary as sel
+        from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary as sel
 
         sel.set_entry(self, decompositions)
 
     def add_decomposition(self, decomposition):
         """Add a decomposition of the instruction to the SessionEquivalenceLibrary."""
         # pylint: disable=cyclic-import
-        from qiskit.circuit.equivalence_library import \
-            SessionEquivalenceLibrary as sel
+        from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary as sel
 
         sel.add_equivalence(self, decomposition)
 
@@ -306,8 +316,8 @@ class Instruction(Operation):
         """Assemble a QasmQobjInstruction"""
         instruction = QasmQobjInstruction(name=self.name)
         # Evaluate parameters
-        #if self.params:
-        #params = [x.evalf(x) if hasattr(x, "evalf") else x for x in self.params]
+        # if self.params:
+        # params = [x.evalf(x) if hasattr(x, "evalf") else x for x in self.params]
         # FIXME: No need to do so for initializing statevector
         instruction.params = self.params
         # Add placeholder for qarg and carg params
@@ -361,7 +371,9 @@ class Instruction(Operation):
         reverse_inst = self.copy(name=self.name + "_reverse")
         reversed_definition = self._definition.copy_empty_like()
         for inst in reversed(self._definition):
-            reversed_definition.append(inst.operation.reverse_ops(), inst.qubits, inst.clbits)
+            reversed_definition.append(
+                inst.operation.reverse_ops(), inst.qubits, inst.clbits
+            )
         reverse_inst.definition = reversed_definition
         return reverse_inst
 
@@ -399,12 +411,16 @@ class Instruction(Operation):
             )
 
         else:
-            inverse_gate = Gate(name=name, num_qubits=self.num_qubits, params=self.params.copy())
+            inverse_gate = Gate(
+                name=name, num_qubits=self.num_qubits, params=self.params.copy()
+            )
 
         inverse_definition = self._definition.copy_empty_like()
         inverse_definition.global_phase = -inverse_definition.global_phase
         for inst in reversed(self._definition):
-            inverse_definition._append(inst.operation.inverse(), inst.qubits, inst.clbits)
+            inverse_definition._append(
+                inst.operation.inverse(), inst.qubits, inst.clbits
+            )
         inverse_gate.definition = inverse_definition
         return inverse_gate
 
@@ -418,7 +434,9 @@ class Instruction(Operation):
             override any previously set condition; it does not stack.
         """
         if not isinstance(classical, (ClassicalRegister, Clbit)):
-            raise CircuitError("c_if must be used with a classical register or classical bit")
+            raise CircuitError(
+                "c_if must be used with a classical register or classical bit"
+            )
         if val < 0:
             raise CircuitError("condition value should be non-negative")
         if isinstance(classical, Clbit):
@@ -525,7 +543,9 @@ class Instruction(Operation):
             CircuitError: If n < 1.
         """
         if int(n) != n or n < 1:
-            raise CircuitError("Repeat can only be called with strictly positive integer.")
+            raise CircuitError(
+                "Repeat can only be called with strictly positive integer."
+            )
 
         n = int(n)
 
