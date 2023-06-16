@@ -26,7 +26,7 @@ class QuafuCircuitHelper:
 
     @property
     def num_qubits(self):
-        # 拿到circuit中的量子bit数量
+        """Get the number of qubits in the original circuit"""
         if not isinstance(self._circ, QuantumCircuit):
             raise ValueError("Please set circ")
         return self._circ.num
@@ -40,12 +40,10 @@ class QuafuCircuitHelper:
         # TODO: For random circuit, no need to remove barrier
         # since it is not in the gate set. For qasm bench, needs better implementations
 
-        # 返回一个gate序列 []
+        # Return a gate sequence []
         return self._circ.gates
 
     def get_instr_qubits(self, instruction: QuantumGate):
-        # QuantumGate 一个gate类
-        # instruction.pos拿到量子门的操作行为
         if isinstance(instruction, SingleQubitGate):
             return [instruction.pos]
         return instruction.pos
@@ -57,9 +55,6 @@ class QuafuCircuitHelper:
             raise ValueError("Please set circ")
         return QdaoSimObj(sv, self._circ)
 
-    def gen_sub_circ(self, instrs: List[QuantumGate], num_local: int, num_primary: int):
-    # 子电路
-    # when cbit < qbit
     def gen_sub_circ(
         self,
         instrs: List[QuantumGate],
@@ -83,16 +78,16 @@ class QuafuCircuitHelper:
         # 1. Get the set of qubits
         qset = set(range(num_local))
 
-        # instrs一系列gate
+        # instrs: a series of gates
         # [XGate, XGate, CXGate, RYGate, RXGate, RZGate, CZGate]
 
         for instr in instrs:
             for q in self.get_instr_qubits(instr):
                 qset.add(q)
 
-        # qbit固定
+        # Fix qbit
         sub_circ = QuantumCircuit(num_primary)
-        # 排序列表 []
+        # Sorting []
         real_qubits = sorted(list(qset))
 
         assert len(real_qubits) <= num_primary
@@ -116,12 +111,6 @@ class QuafuCircuitHelper:
             logging.debug(
                 "New_instr::pos::{}, real_qubits::{}".format(new_pos, real_qubits)
             )
-
-        # logging.debug(sub_circ.draw_circuit())
-        logging.info("\nGenerated sub-circ, real_qubits::{}".format(real_qubits))
-            
-            logging.debug("New_instr::pos::{}, real_qubits::{}".format(
-                new_pos, real_qubits))
 
         # logging.debug(sub_circ.draw_circuit())
         logging.info(
