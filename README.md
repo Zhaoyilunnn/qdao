@@ -6,7 +6,7 @@ Quantum Data Access Optimizaton
 ```BASH
 # First clone this repo
 pip install -r requirements.txt
-python setup.py install
+pip install .
 ```
 
 # Usage
