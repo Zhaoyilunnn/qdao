@@ -1,16 +1,3 @@
-# qdao
-Quantum Data Access Optimizaton
-
-# Install
-
-```BASH
-# First clone this repo
-pip install -r requirements.txt
-python setup.py install
-```
-
-# Usage
-```Python
 from qdao import Engine
 from qiskit.circuit.random import random_circuit
 from qiskit import transpile
@@ -25,4 +12,3 @@ circ = transpile(circ, backend=backend)
 # `num_local`: size of a storage unit
 eng = Engine(circuit=circ, num_primary=26, num_local=22)
 eng.run()
-```

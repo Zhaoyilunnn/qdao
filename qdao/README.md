@@ -65,23 +65,3 @@ The impact is **reduce memory traversal times from $M$ to $G$**
 2. Reordering opportunity
 
 <img width="705" alt="image" src="https://user-images.githubusercontent.com/40353317/187072049-04a8f9ec-aaa2-44b8-ae5f-de9fbd9abf58.png">
-
-
-# Usage
-
-```Python
-from qdao.engine import Engine
-
-# Create a qiskit quantum circuit `circ`
-circ = QuantumCircuit(20)
-# ...
-
-# Set the number of qubits that you wish to reside in host memory
-NP = 15
-
-# Set the number of qubits that you wish to reside in a minumum storage unit
-NL = 10
-
-eng = Engine(circuit=circ, np=NP, num_local=NL, num_local=NL)
-eng.run()
-```
