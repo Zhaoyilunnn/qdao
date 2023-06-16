@@ -12,8 +12,8 @@ from qdao.circuit import QdaoCircuit
 
 from cirq.circuits import Circuit
 
-# 前端 cirq
-# 后端 qsim
+# Frontend cirq
+# Backend qsim
 
 # import cirq.ops.gate_operation as qsim_op
 from cirq.ops.gate_operation import GateOperation
@@ -64,8 +64,8 @@ class QsimCircuitHelper:
         # TODO: For random circuit, no need to remove barrier
         # since it is not in the gate set. For qasm bench, needs better implementations
 
-        # 返回一个操作的迭代序列 []
-        # 示例：
+        # Return an iterator of an instruction []
+        # Example:
         # [cirq.H(cirq.LineQubit(0)), cirq.H(cirq.LineQubit(1)),
         #  cirq.H(cirq.LineQubit(2)), cirq.CZ(cirq.LineQubit(1), cirq.LineQubit(2))]
         self._circ.itrs = []
@@ -75,8 +75,8 @@ class QsimCircuitHelper:
         return self._circ.itrs
 
     def get_instr_qubits(self, instruction: GateOperation):
-        # QuantumGate 一个gate类
-        # instruction.pos拿到量子门的操作行为
+        # QuantumGate: gate class
+        # instruction.pos: operation's behavior
         return instruction.qubits
 
     def init_circ_from_sv(self, sv: np.ndarray):
@@ -107,21 +107,21 @@ class QsimCircuitHelper:
         # 1. Get the set of qubits
         qset = set(range(num_local))
 
-        # instrs一系列gate
+        # instrs: a series of gates
         # [XGate, XGate, CXGate, RYGate, RXGate, RZGate, CZGate]
 
         for instr in instrs:
             for q in self.get_instr_qubits(instr):
-                # q的内容: q(0) q(1)
-                # q.x q的编号
+                # q: q(0) q(1)
+                # q.x index of q
                 qset.add(q.x)
 
-        # 子电路的大小已经定死 num_primary
+        # Size of sub-circ is fixed at num_primary
         sub_circ = cirq.Circuit()
-        # sub_qubits 后续需要联系操作添加到sub_circ
+        # sub_qubits: corresponds to operations in a sub_circ
         sub_qubits = cirq.LineQubit.range(num_primary)
 
-        # 排序列表 []
+        # Sorting []
         real_qubits = sorted(list(qset))
 
         assert len(real_qubits) <= num_primary
@@ -132,23 +132,23 @@ class QsimCircuitHelper:
         }
 
         for instr in instrs:
-            # 超出子电路的大小时，做一个跳出
+            # Check whether current circuit exceeds num_primary
             bind = False
             new_instr = copy.deepcopy(instr)
             new_pos = [qubit_map[q.x] for q in instr.qubits]
-            # num_primary的大小约束
+            # num_primary limitaion
             # 0~(num_primary-1)
             for x in new_pos:
                 if x > (num_primary-1):
-                    bind = True  
+                    bind = True
                     break
-            # 超出范围
+            # Out of bound
             if bind:
-                break  
+                break
 
             new_instr.pos = new_pos
 
-            # 添加操作
+            # Add an op
             sub_circ.append(new_instr)
 
             logging.debug("New_instr::pos::{}, real_qubits::{}".format(
