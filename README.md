@@ -11,7 +11,7 @@ pip install .
 
 # Usage
 
-The following code snippet shows the basic usage of qdao. You can configure the `num_primary` parameter to reduce the memory occupation. In this example, a 28-qubit circuit (4 GB memory requirement) to configured to use only 1 GB memory (`num_primary=26`, i.e., $2^{26} * 16 \text{ Byte}$).
+The following code snippet shows the basic usage of qdao. You can configure the `num_primary` parameter to reduce the memory occupation. In this example, a 28-qubit circuit (4 GB memory requirement) to configured to use only 1 GB memory (`num_primary=26`, i.e., $2^{26} * 16 \text{ Byte} = 1\text{ GB}$).
 ```Python
 from qdao import Engine
 from qiskit.circuit.random import random_circuit
@@ -39,6 +39,14 @@ eng.run()
   organization={IEEE}
 }
 ```
+
+# Under Development
+There are some key features to be supported in the future
+
+ - [ ] GPU simulation
+ - [ ] Noisy simulation
+
+ 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjI1NDUxMDA0XX0=
+eyJoaXN0b3J5IjpbLTMwNDU3NzIwNV19
 -->
