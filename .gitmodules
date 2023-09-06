@@ -1,0 +1,6 @@
+[submodule "qutils"]
+	path = qutils
+	url = https://github.com/Zhaoyilunnn/qutils.git
+[submodule "qcs"]
+	path = qcs
+	url = https://github.com/Zhaoyilunnn/qcs.git
