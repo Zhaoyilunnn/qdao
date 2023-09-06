@@ -26,3 +26,10 @@ circ = transpile(circ, backend=backend)
 eng = Engine(circuit=circ, num_primary=26, num_local=22)
 eng.run()
 ```
+
+# Citation
+```bib
+`
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbOTU1ODE2NTY3XX0=
+-->
