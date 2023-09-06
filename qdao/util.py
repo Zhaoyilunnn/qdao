@@ -256,3 +256,23 @@ def retrieve_sv(num_qubits: int, num_local: int = 2):
         sv[i * su_size : (i + 1) * su_size] = vec
 
     return sv
+
+
+def safe_import(module_name, submodule_name):
+    """Import a sumodule from a module, if the module is
+    not installed, no error occurs
+
+    Args:
+        module_name: The name of module.
+        submodule_name: The name of submodule in the module
+
+    Notes:
+        Currently only support decorator
+    """
+    try:
+        module = __import__(module_name)
+        return getattr(module, submodule_name)
+    except ImportError as ex:
+        def placeholder_decorator(func):
+            return func
+        return placeholder_decorator

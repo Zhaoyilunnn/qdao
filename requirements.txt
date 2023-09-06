@@ -2,7 +2,8 @@ cirq_core==1.1.0
 matplotlib==3.6.3
 mqt.ddsim==1.17.2
 numpy==1.23.4
-qiskit_aer==0.11.0
+qiskit==0.39.0
 scipy==1.11.1
 setuptools==63.4.1
 sympy==1.11.1
+pyquafu==0.3.4
