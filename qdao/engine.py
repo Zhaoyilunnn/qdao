@@ -4,11 +4,16 @@ from typing import Any, Optional
 
 import numpy as np
 
-from qdao.circuit import (BasePartitioner, CircuitHelperProvider, QdaoCircuit,
-                        StaticPartitioner)
+from qdao.circuit import (
+    BasePartitioner,
+    CircuitHelperProvider,
+    QdaoCircuit,
+    StaticPartitioner,
+)
 from qdao.manager import SvManager
 from qdao.simulator import SimulatorProvider
 from qdao.util import generate_secondary_file_name, safe_import
+
 time_it = safe_import("qutils", "time_it")
 print_statistics = safe_import("qutils", "print_statistics")
 

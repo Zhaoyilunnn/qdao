@@ -4,6 +4,7 @@ from typing import List, Optional
 
 import numpy as np
 import cirq
+
 # from . import qsim
 
 # from qsimcirq.qsim_circuit import (_translate_ControlledGate, QSimCircuit
@@ -21,14 +22,11 @@ from cirq.ops.gate_operation import GateOperation
 
 # qsim_op ->QuantumGate
 # qsim_op.gate ->qsim_gate
-#gate_kind = _cirq_gate_kind(qsim_gate)
+# gate_kind = _cirq_gate_kind(qsim_gate)
+
 
 class QsimCircuitHelper:
-
-    def __init__(
-        self,
-        circ: Optional[Circuit] = None
-    ) -> None:
+    def __init__(self, circ: Optional[Circuit] = None) -> None:
         self._circ = circ or None
         self._circ.num = 0
         self._circ.itrs = []
@@ -81,15 +79,13 @@ class QsimCircuitHelper:
 
     def init_circ_from_sv(self, sv: np.ndarray):
         from qdao.simulator import QdaoSimObj
+
         if not isinstance(self._circ, Circuit):
             raise ValueError("Please set circ")
         return QdaoSimObj(sv, self._circ)
 
     def gen_sub_circ(
-        self,
-        instrs: List[GateOperation],
-        num_local: int,
-        num_primary: int
+        self, instrs: List[GateOperation], num_local: int, num_primary: int
     ):
         """Generate a sub circuit based on a list of circuit instructions
         We assume there's no conditional instructions and no measurement
@@ -126,10 +122,7 @@ class QsimCircuitHelper:
 
         assert len(real_qubits) <= num_primary
 
-        qubit_map = {
-            q: i
-            for i, q in enumerate(real_qubits)
-        }
+        qubit_map = {q: i for i, q in enumerate(real_qubits)}
 
         for instr in instrs:
             # Check whether current circuit exceeds num_primary
@@ -139,7 +132,7 @@ class QsimCircuitHelper:
             # num_primary limitaion
             # 0~(num_primary-1)
             for x in new_pos:
-                if x > (num_primary-1):
+                if x > (num_primary - 1):
                     bind = True
                     break
             # Out of bound
@@ -151,11 +144,11 @@ class QsimCircuitHelper:
             # Add an op
             sub_circ.append(new_instr)
 
-            logging.debug("New_instr::pos::{}, real_qubits::{}".format(
-                new_pos, real_qubits))
+            logging.debug(
+                "New_instr::pos::{}, real_qubits::{}".format(new_pos, real_qubits)
+            )
 
         # logging.debug(sub_circ.draw_circuit())
-        logging.info(
-            "\nGenerated sub-circ, real_qubits::{}".format(real_qubits))
+        logging.info("\nGenerated sub-circ, real_qubits::{}".format(real_qubits))
 
         return QdaoCircuit(sub_circ, real_qubits)

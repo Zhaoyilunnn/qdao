@@ -19,6 +19,7 @@ from qdao.util import *
 print_statistics = safe_import("qutils", "print_statistics")
 time_it = safe_import("qutils", "time_it")
 
+
 class SvManager:
     """Statevector data access manager"""
 

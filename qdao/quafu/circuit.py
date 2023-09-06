@@ -11,7 +11,6 @@ from quafu.circuits.quantum_circuit import (
 )
 
 
-
 class QuafuCircuitHelper:
     def __init__(self, circ: Optional[QuantumCircuit] = None) -> None:
         self._circ = circ or None
@@ -55,12 +54,7 @@ class QuafuCircuitHelper:
             raise ValueError("Please set circ")
         return QdaoSimObj(sv, self._circ)
 
-    def gen_sub_circ(
-        self,
-        instrs: List[QuantumGate],
-        num_local: int,
-        num_primary: int
-    ):
+    def gen_sub_circ(self, instrs: List[QuantumGate], num_local: int, num_primary: int):
         """Generate a sub circuit based on a list of circuit instructions
         We assume there's no conditional instructions and no measurement
         instructions
@@ -113,6 +107,5 @@ class QuafuCircuitHelper:
             )
 
         # logging.debug(sub_circ.draw_circuit())
-        logging.info(
-            "\nGenerated sub-circ, real_qubits::{}".format(real_qubits))
+        logging.info("\nGenerated sub-circ, real_qubits::{}".format(real_qubits))
         return QdaoCircuit(sub_circ, real_qubits)

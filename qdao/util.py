@@ -273,6 +273,8 @@ def safe_import(module_name, submodule_name):
         module = __import__(module_name)
         return getattr(module, submodule_name)
     except ImportError as ex:
+
         def placeholder_decorator(func):
             return func
+
         return placeholder_decorator
