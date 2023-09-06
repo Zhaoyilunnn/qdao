@@ -1,5 +1,5 @@
-# qdao
-Quantum Data Access Optimizaton
+# What is qdao
+qdao is a **q**uantum **d**ata **a**ccess **o**ptimization framework. It leverages secondary storage to simulate large scale quantum circuits and minimizes the data movement between memory and secondary storage. Full state quantum circuit simulation 
 
 # Install
 
@@ -29,7 +29,14 @@ eng.run()
 
 # Citation
 ```bib
-`
+@inproceedings{zhao2022q,
+  title={Full State Quantum Circuit Simulation Beyond Memory Limit},
+  author={Zhao, Yilun and Chen, Yu and Li, He and Wang, Ying and Chang, Kaiyan and Wang, Bingmeng and Li, Bing and Han, Yinhe},
+  booktitle={2023 IEEE/ACM International Conference on Computer-Aided Design (ICCAD)},
+  year={2023},
+  organization={IEEE}
+}
+```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTU1ODE2NTY3XX0=
+eyJoaXN0b3J5IjpbMjAyNTExODgxNV19
 -->
