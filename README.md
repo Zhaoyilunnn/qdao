@@ -46,7 +46,9 @@ There are some key features to be supported in the future
  - [ ] GPU simulation
  - [ ] Noisy simulation
 
+Note that, setting initial statevector using qiskit incurs significant data copy overhead when the statevector is large, thus using qdao with qiskit to simulate large circuit can be notably slower than .  we will primarily support [pyquafu](https://github.com/ScQ-Cloud/pyquafu) in the future. 
+
  
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTMwNDU3NzIwNV19
+eyJoaXN0b3J5IjpbLTc5ODcyNzg5LC0zMDQ1NzcyMDVdfQ==
 -->
