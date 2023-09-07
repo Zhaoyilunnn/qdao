@@ -1,5 +1,12 @@
 # Contributing Guide
 
+# Development
+Fork this repository
+```bash
+pip install -r requirements.txt
+pip install -e .
+```
+
 # Style
 It is recommended to use [black](https://black.readthedocs.io/en/stable/) to unify the code style.
 
