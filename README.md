@@ -31,7 +31,7 @@ eng.run()
 
 # Citation
 ```bib
-@inproceedings{zhao2022q,
+@inproceedings{qdao2023,
   title={Full State Quantum Circuit Simulation Beyond Memory Limit},
   author={Zhao, Yilun and Chen, Yu and Li, He and Wang, Ying and Chang, Kaiyan and Wang, Bingmeng and Li, Bing and Han, Yinhe},
   booktitle={2023 IEEE/ACM International Conference on Computer-Aided Design (ICCAD)},
