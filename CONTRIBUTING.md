@@ -1,5 +1,8 @@
 # Contributing Guide
 
+# Style
+It is recommended to use [black](https://black.readthedocs.io/en/stable/) to unify the code style.
+
 # Test
 
 Install additional utilization package to profile the time consumption of key steps (Optional).
@@ -29,5 +32,5 @@ Command line options
 
 It is encouraged to build similar unit test for newly supported backend. 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTg4OTkyNDk1Ml19
+eyJoaXN0b3J5IjpbMjA5MDIyNjA4OCwxODg5OTI0OTUyXX0=
 -->
