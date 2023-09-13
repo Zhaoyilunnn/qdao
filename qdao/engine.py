@@ -30,6 +30,7 @@ class Engine:
         num_local: int = 2,
         is_parallel: bool = False,
         backend="qiskit",
+        sv_location = "hard_disk",
         **backend_args
     ) -> None:
         if isinstance(partitioner, BasePartitioner):
@@ -58,6 +59,7 @@ class Engine:
                 num_primary=num_primary,
                 num_local=num_local,
                 is_parallel=is_parallel,
+                sv_location=sv_location,
             )
 
         self._np, self._nl = num_primary, num_local

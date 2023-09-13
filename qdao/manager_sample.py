@@ -29,7 +29,6 @@ class SvManager:
         num_primary: int = 4,
         num_local: int = 2,
         is_parallel: bool = False,
-        sv_location = "hard_disk",
     ) -> None:
         """
         Args:
@@ -43,15 +42,6 @@ class SvManager:
         self._chunk = np.zeros(1 << num_primary, dtype=np.complex128)
         self._is_parallel = is_parallel
         self._executor = BatchParallelExecutor()
-
-        # Save statevector in memory 
-        self._global_sv = []
-
-        # Storage Location Setting
-        # you can choose memory or hard_disk
-        # self._sv_location = 'memory'
-        self._sv_location = sv_location
-
 
         if not os.path.isdir("data"):
             os.mkdir("data")
@@ -102,12 +92,8 @@ class SvManager:
         su = np.zeros(1 << self._nl, dtype=np.complex128)
         if i == 0:
             su[0] = 1.0
-
-        if self._sv_location == 'hard_disk':
-            fn = generate_secondary_file_name(i)
-            np.save(fn, su)
-        else:
-            self._global_sv.append(su)
+        fn = generate_secondary_file_name(i)
+        np.save(fn, su)
 
     @time_it
     def initialize(self):
@@ -122,12 +108,7 @@ class SvManager:
 
     def _load_single_su(self, isub: int, fn: str):
         # Populate to current chunk
-         
-        if self._sv_location == 'hard_disk':
-            vec = np.load(fn)
-        else:
-            vec = self._global_sv[isub]
-
+        vec = np.load(fn)
         chk_start = isub << self._nl
         chk_end = (isub << self._nl) + (1 << self._nl)
         self._chunk[chk_start:chk_end] = vec
@@ -183,13 +164,7 @@ class SvManager:
         # Save corresponding slice to secondary storage
         chk_start = isub << self._nl
         chk_end = (isub << self._nl) + (1 << self._nl)
-        
-        if self._sv_location == 'hard_disk':
-            np.save(fn, self._chunk[chk_start:chk_end])
-        else:
-            self._global_sv[isub] = self._chunk[chk_start:chk_end]
-            # np.save(fn, self._chunk[chk_start:chk_end])
-            # print(self._chunk[chk_start:chk_end])
+        np.save(fn, self._chunk[chk_start:chk_end])
 
     @time_it
     def store_sv(self, org_qubits: List[int]):
