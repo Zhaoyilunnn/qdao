@@ -45,7 +45,11 @@ eng = Engine(circuit=circ, num_primary=26, num_local=22, sv_location="memory", d
 }
 ```
 
-# Under Development
+# Development
+
+See the [CONTRIBUTING.md](https://github.com/Zhaoyilunnn/qdao/blob/main/CONTRIBUTING.md).
+
+# Features
 There are some key features to be supported in the future
 
  - [x] GPU simulation
