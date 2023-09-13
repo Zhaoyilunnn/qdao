@@ -4,6 +4,7 @@ from typing import Optional
 import numpy as np
 from mqt import ddsim
 from qiskit_aer import Aer
+from qdao.exceptions import QdaoError
 
 
 class QiskitSimulator:
@@ -25,6 +26,10 @@ class QiskitSimulator:
 
     def run(self, simobj) -> np.ndarray:
         res = self._sim.run(simobj.circ).result()
+        if not res.success:
+            raise QdaoError(
+                f"Running simulation using qiskit failed due to: {res.status}"
+            )
         try:
             sv = res.get_statevector().data
         except Exception as e:
