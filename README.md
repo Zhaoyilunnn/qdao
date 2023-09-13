@@ -48,7 +48,7 @@ eng = Engine(circuit=circ, num_primary=26, num_local=22, sv_location="memory", d
 # Under Development
 There are some key features to be supported in the future
 
- - [ ] GPU simulation
+ - [x] GPU simulation
  - [ ] Noisy simulation
 
 Note that, setting initial statevector using qiskit incurs significant data copy overhead when the statevector is large, thus using qdao with qiskit to simulate large circuit may be notably slower than original qiskit simulator. To address the data copy problem, we include some optimization in [pyquafu](https://github.com/ScQ-Cloud/pyquafu) and we will primarily support pyquafu backend in the future.
