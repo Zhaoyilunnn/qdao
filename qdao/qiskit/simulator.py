@@ -18,6 +18,7 @@ class QiskitSimulator:
 
         self._sim.set_options(fusion_enable=fusion)
         self._sim.set_options(method="statevector")
+        self._sim.set_options(device="GPU")
 
     def run(self, simobj) -> np.ndarray:
         res = self._sim.run(simobj.circ).result()
