@@ -19,5 +19,4 @@ sim-beta/Debug
 sim-beta/build
 sim-beta/compile_commands.json
 test_data*
-test/
 *_sample.py

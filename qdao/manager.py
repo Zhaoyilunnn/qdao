@@ -29,7 +29,7 @@ class SvManager:
         num_primary: int = 4,
         num_local: int = 2,
         is_parallel: bool = False,
-        sv_location = "hard_disk",
+        sv_location="disk",
     ) -> None:
         """
         Args:
@@ -44,14 +44,13 @@ class SvManager:
         self._is_parallel = is_parallel
         self._executor = BatchParallelExecutor()
 
-        # Save statevector in memory 
+        # Save statevector in memory
         self._global_sv = []
 
         # Storage Location Setting
-        # you can choose memory or hard_disk
+        # you can choose memory or disk
         # self._sv_location = 'memory'
         self._sv_location = sv_location
-
 
         if not os.path.isdir("data"):
             os.mkdir("data")
@@ -103,7 +102,7 @@ class SvManager:
         if i == 0:
             su[0] = 1.0
 
-        if self._sv_location == 'hard_disk':
+        if self._sv_location == "disk":
             fn = generate_secondary_file_name(i)
             np.save(fn, su)
         else:
@@ -122,8 +121,8 @@ class SvManager:
 
     def _load_single_su(self, isub: int, fn: str):
         # Populate to current chunk
-         
-        if self._sv_location == 'hard_disk':
+
+        if self._sv_location == "disk":
             vec = np.load(fn)
         else:
             vec = self._global_sv[isub]
@@ -176,15 +175,15 @@ class SvManager:
         else:
             for isub, fn in load_single_su_params:
                 self._load_single_su(isub, fn)
-        
+
         return self._chunk
 
     def _store_single_su(self, isub: int, fn: str):
         # Save corresponding slice to secondary storage
         chk_start = isub << self._nl
         chk_end = (isub << self._nl) + (1 << self._nl)
-        
-        if self._sv_location == 'hard_disk':
+
+        if self._sv_location == "disk":
             np.save(fn, self._chunk[chk_start:chk_end])
         else:
             self._global_sv[isub] = self._chunk[chk_start:chk_end]

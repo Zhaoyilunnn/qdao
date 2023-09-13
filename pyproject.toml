@@ -4,3 +4,6 @@ version = "0.0.1"
 dependencies = [
     # TODO
 ]
+
+[tool.setuptools.packages.find]
+include = ["qdao"]

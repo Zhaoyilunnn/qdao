@@ -4,3 +4,6 @@
 [submodule "qcs"]
 	path = qcs
 	url = https://github.com/Zhaoyilunnn/qcs.git
+[submodule "QASMBench"]
+	path = QASMBench
+	url = https://github.com/pnnl/QASMBench.git

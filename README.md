@@ -29,6 +29,11 @@ eng = Engine(circuit=circ, num_primary=26, num_local=22)
 eng.run()
 ```
 
+To use GPU for simulation and use host memory to store the entire statevector, try following configurations
+```Python
+eng = Engine(circuit=circ, num_primary=26, num_local=22, sv_location="memory", device="GPU")
+```
+
 # Citation
 ```bib
 @inproceedings{qdao2023,
@@ -46,9 +51,9 @@ There are some key features to be supported in the future
  - [ ] GPU simulation
  - [ ] Noisy simulation
 
-Note that, setting initial statevector using qiskit incurs significant data copy overhead when the statevector is large, thus using qdao with qiskit to simulate large circuit may be notably slower than original qiskit simulator. To address the data copy problem, we include some optimization in [pyquafu](https://github.com/ScQ-Cloud/pyquafu) and we will primarily support pyquafu backend in the future. 
+Note that, setting initial statevector using qiskit incurs significant data copy overhead when the statevector is large, thus using qdao with qiskit to simulate large circuit may be notably slower than original qiskit simulator. To address the data copy problem, we include some optimization in [pyquafu](https://github.com/ScQ-Cloud/pyquafu) and we will primarily support pyquafu backend in the future.
 
- 
+
 <!--stackedit_data:
 eyJoaXN0b3J5IjpbODI1MjA3MjgxLC0xNjQ3MjEyMzY0LC0zMD
 Q1NzcyMDVdfQ==

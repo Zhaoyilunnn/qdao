@@ -8,7 +8,10 @@ from qiskit_aer import Aer
 
 class QiskitSimulator:
     def __init__(
-        self, provider: Optional[str] = None, fusion: Optional[bool] = False
+        self,
+        provider: Optional[str] = None,
+        fusion: Optional[bool] = False,
+        device: str = "CPU",
     ) -> None:
         if provider:
             if provider == "ddsim":
@@ -18,7 +21,7 @@ class QiskitSimulator:
 
         self._sim.set_options(fusion_enable=fusion)
         self._sim.set_options(method="statevector")
-        self._sim.set_options(device="GPU")
+        self._sim.set_options(device=device)
 
     def run(self, simobj) -> np.ndarray:
         res = self._sim.run(simobj.circ).result()
