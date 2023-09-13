@@ -3,6 +3,7 @@
 # Development
 Fork this repository
 ```bash
+git clone --recurse <forked-repo-url>
 pip install -r requirements.txt
 pip install -e .
 ```
