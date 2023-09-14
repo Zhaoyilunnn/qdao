@@ -4,8 +4,8 @@ qdao is a **q**uantum **d**ata **a**ccess **o**ptimization framework. It leverag
 # Install
 
 ```BASH
-# First clone this repo
-pip install -r requirements.txt
+git clone https://github.com/Zhaoyilunnn/qdao.git
+cd qdao
 pip install .
 ```
 
@@ -35,6 +35,7 @@ eng = Engine(circuit=circ, num_primary=26, num_local=22, sv_location="memory", d
 ```
 
 # Citation
+If you find our work useful, please kindly cite our paper as below.
 ```bib
 @inproceedings{qdao2023,
   title={Full State Quantum Circuit Simulation Beyond Memory Limit},
@@ -55,8 +56,8 @@ There are some key features to be supported in the future
  - [x] GPU simulation
  - [ ] Noisy simulation
 
-Note that, setting initial statevector using qiskit incurs significant data copy overhead when the statevector is large, thus using qdao with qiskit to simulate large circuit may be notably slower than original qiskit simulator. To address the data copy problem, we include some optimization in [pyquafu](https://github.com/ScQ-Cloud/pyquafu) and we will primarily support pyquafu backend in the future.
-
+# Limitations
+Setting smaller memory requirement leads to larger performance overhead. This can be more severe when using qiskit backend as setting initial statevector in qiskit incurs additional data copy, this problem is avoided in [pyquafu](https://github.com/ScQ-Cloud/pyquafu), although pyquafu is slower than qiskit.
 
 <!--stackedit_data:
 eyJoaXN0b3J5IjpbODI1MjA3MjgxLC0xNjQ3MjEyMzY0LC0zMD

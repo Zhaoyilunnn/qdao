@@ -3,8 +3,6 @@
 # Development
 Fork this repository
 ```bash
-git clone --recurse <forked-repo-url>
-pip install -r requirements.txt
 pip install -e .
 ```
 
@@ -13,21 +11,23 @@ It is recommended to use [black](https://black.readthedocs.io/en/stable/) to uni
 
 # Test
 
-Install additional utilization package to profile the time consumption of key steps and enable running of unit tests.
+## Use `pytest`
+
+We have a [collection](https://github.com/Zhaoyilunnn/qcs) of qasm benchmarks for testing and experiment.
+
 ```bash
-cd qutils/
-pip install .
-cd -
+git clone https://github.com/Zhaoyilunnn/qcs.git
 ```
+
 
 Pass the following cases
 ```bash
 
 # Test run on quafu backend
-pytest -s -k test_run_quafu_any_qasm test/qdao/engine.py --nq 12 --np 10 --nl 8 --qasm random_12_9_max_operands_2_gen.qasm
+pytest -s -k test_run_quafu_any_qasm tests/qdao/engine_test.py --nq 12 --np 10 --nl 8 --qasm random_12_9_max_operands_2_gen.qasm
 
 # Test run on qiskit backend
-pytest -s -k test_run_qiskit_any_qasm test/qdao/engine.py --qasm random_12_9_max_operands_2_gen.qasm --nq 12 --np 10 --nl 8
+pytest -s -k test_run_qiskit_any_qasm tests/qdao/engine_test.py --nq 12 --np 10 --nl 8 --qasm random_12_9_max_operands_2_gen.qasm
 ```
 
 Command line options
@@ -40,7 +40,10 @@ Command line options
  - `--sv_location`: "memory" or "disk", for GPU mode, it is recommended to use "memory".
 
 It is encouraged to build similar unit test for newly supported backend.
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzOTYwMTkzODEsMjA5MDIyNjA4OCwxOD
-g5OTI0OTUyXX0=
--->
+
+## Use `tox`
+Install [tox](https://tox.wiki/en/4.11.3/installation.html) following the official guidline.
+
+```bash
+tox run
+```
