@@ -1,7 +1,7 @@
 from qiskit.circuit import QuantumCircuit
 from constants import QCS_BENCHMARKS_DIR
 from qdao.circuit import BaselinePartitioner, StaticPartitioner
-from test.qdao import QdaoBaseTest
+from tests.qdao import QdaoBaseTest
 
 
 class TestBaselinePartitioner(QdaoBaseTest):

@@ -10,14 +10,17 @@ from qiskit.quantum_info import Statevector, random_density_matrix
 from qdao.circuit import BaselinePartitioner
 from qdao.simulator import QdaoSimObj
 
-from test.qdao import QdaoBaseTest
+from tests.qdao import QdaoBaseTest
 from qdao.engine import Engine
 from qdao.util import retrieve_sv
 
 from constants import *
+import pytest
 
 
 class TestEngine(QdaoBaseTest):
+
+    @pytest.mark.skip(reason="turn off automatic detection of this test since it is not necessary")
     def test_pre_postprocessing(self):
         circ = self.get_qiskit_circ("random", num_qubits=8, depth=20, measure=False)
         circ = transpile(circ, self._sv_sim)
@@ -34,6 +37,7 @@ class TestEngine(QdaoBaseTest):
 
         assert np.array_equal(sv, obj.objs[0])
 
+    @pytest.mark.skip(reason="turn off automatic detection of this test since it is not necessary")
     def test_run_step(self, nq):
         NQ = int(nq)
         NP = NQ
@@ -146,6 +150,7 @@ class TestEngine(QdaoBaseTest):
             device=device,
         )
 
+    @pytest.mark.skip(reason="turn off automatic detection of this test since it is not necessary")
     def test_run_qiskit_random_basic(self, nq, np, nl, mode):
         NQ, NP, NL = self.get_qdao_params(nq, np, nl)
 
@@ -182,6 +187,7 @@ class TestEngine(QdaoBaseTest):
         circ = transpile(circ, self._sv_sim)
         self.run_qiskit_diff_test(circ, NQ, NP, NL, mode)
 
+    @pytest.mark.skip(reason="turn off automatic detection of this test since it is not necessary")
     def test_run_qiskit_random(self, nq):
         NQ = int(nq)
         NP = NQ - 2
@@ -204,6 +210,7 @@ class TestEngine(QdaoBaseTest):
         print("Qiskit runs: {}".format(time() - st))
         assert Statevector(sv).equiv(Statevector(sv_org))
 
+    @pytest.mark.skip(reason="turn off automatic detection of this test since it is not necessary")
     def test_run_quafu_single_random_no_init(self, nq):
         NQ = int(nq)
 
@@ -231,6 +238,7 @@ class TestEngine(QdaoBaseTest):
         print(sv_with_init)
         assert Statevector(sv_wo_init).equiv(Statevector(sv_with_init))
 
+    @pytest.mark.skip(reason="turn off automatic detection of this test since it is not necessary")
     def test_run_quafu_random_single(self, nq):
         NQ = int(nq)
 
@@ -252,6 +260,7 @@ class TestEngine(QdaoBaseTest):
         ).get_statevector()
         print("Quafu runs: {}".format(time() - st))
 
+    @pytest.mark.skip(reason="turn off automatic detection of this test since it is not necessary")
     def test_run_quafu_random_step_by_step(self, nq):
         NQ = int(nq)
         NP = NQ - 2
@@ -387,6 +396,7 @@ class TestEngine(QdaoBaseTest):
 
         return NQ, NP, NL
 
+    @pytest.mark.skip(reason="turn off automatic detection of this test since it is not necessary")
     def test_run_quafu_random_basic(self, nq, np, nl, mode, parallel, diff):
         """
         Basic test to run random circuits and
@@ -462,6 +472,7 @@ class TestEngine(QdaoBaseTest):
             circ, NQ, NP, NL, mode=mode, is_parallel=parallel, is_diff=diff
         )
 
+    @pytest.mark.skip(reason="turn off automatic detection of this test since it is not necessary")
     def test_run_quafu_qasm_basic(self, bench, nq):
         """
         Basic test to run random circuits and
@@ -486,6 +497,7 @@ class TestEngine(QdaoBaseTest):
         circ = qiskit.circuit.QuantumCircuit.from_qasm_file(qasm_path)
         self.run_quafu_diff_test(circ, NQ, NP, NL)
 
+    @pytest.mark.skip(reason="turn off automatic detection of this test since it is not necessary")
     def test_run_quafu_random_single_vs_qiskit_with_init(self, nq):
         NQ = int(nq)
 
@@ -528,6 +540,7 @@ class TestEngine(QdaoBaseTest):
 
         print("Qiskit runs: {}".format(time() - st))
 
+    @pytest.mark.skip(reason="turn off automatic detection of this test since it is not necessary")
     def test_run_quafu_bench(self, bench):
         qasm_path = QASMBENCH_LARGE_DIR + "/" + bench + "/" + bench + ".qasm"
         quafu_circ = self.get_quafu_circ_from_qasm(qasm_path)

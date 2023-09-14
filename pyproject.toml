@@ -2,7 +2,16 @@
 name = "qdao"
 version = "0.0.1"
 dependencies = [
-    # TODO
+    "cirq_core==1.1.0",
+    "matplotlib==3.6.3",
+    "mqt.ddsim==1.17.2",
+    "numpy==1.23.4",
+    "qiskit==0.39.0",
+    "scipy==1.11.1",
+    "setuptools>=65.5.1",
+    "sympy==1.11.1",
+    "pyquafu==0.3.4",
+    "qutils @ git+https://github.com/Zhaoyilunnn/qutils.git@main"
 ]
 
 [tool.setuptools.packages.find]

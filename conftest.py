@@ -8,10 +8,10 @@ import logging
 
 
 def pytest_addoption(parser):
-    parser.addoption("--qasm", action="store", default="")
-    parser.addoption("--nq", action="store", default=10)
-    parser.addoption("--np", action="store", default=0)
-    parser.addoption("--nl", action="store", default=0)
+    parser.addoption("--qasm", action="store", default="random_12_9_max_operands_2_gen.qasm")
+    parser.addoption("--nq", action="store", default=12)
+    parser.addoption("--np", action="store", default=10)
+    parser.addoption("--nl", action="store", default=8)
     parser.addoption("--mode", action="store", default="QDAO")
     parser.addoption("--parallel", action="store", default=1)
     parser.addoption("--diff", action="store", default=1)

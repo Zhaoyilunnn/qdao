@@ -3,6 +3,7 @@
 *.npy
 *.pdf
 *.png
+*_sample.py
 *_study.py
 *build
 *core*
@@ -12,6 +13,8 @@
 *temp*
 *tmp
 .ccls-cache*
+.tox
+qcs
 __pycache__*
 nohup.out
 sim-beta/.ccls*
@@ -19,4 +22,3 @@ sim-beta/Debug
 sim-beta/build
 sim-beta/compile_commands.json
 test_data*
-*_sample.py

@@ -7,7 +7,7 @@ from qiskit.compiler import transpile
 
 from qdao.manager import SvManager
 from qdao.util import DATA_DIR
-from test.qdao import QdaoBaseTest
+from tests.qdao import QdaoBaseTest
 
 
 class TestSvManager(QdaoBaseTest):
