@@ -1,12 +1,11 @@
 import copy
 import os
-import sys
-from time import time, sleep
+from time import time
 import numpy as np
 from qiskit import QuantumCircuit, qiskit
 
 from qiskit.compiler import transpile
-from qiskit.quantum_info import Statevector, random_density_matrix
+from qiskit.quantum_info import Statevector
 from qdao.circuit import BaselinePartitioner
 from qdao.simulator import QdaoSimObj
 
@@ -16,7 +15,6 @@ from qdao.util import retrieve_sv
 
 from constants import *
 import pytest
-import shutil
 
 
 class TestEngine(QdaoBaseTest):

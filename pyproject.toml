@@ -7,10 +7,9 @@ dependencies = [
     "mqt.ddsim==1.17.2",
     "numpy==1.23.4",
     "qiskit==0.39.0",
-    "scipy==1.11.1",
     "setuptools>=65.5.1",
     "sympy==1.11.1",
-    "pyquafu==0.3.4",
+    "pyquafu==0.3.5",
     "qutils @ git+https://github.com/Zhaoyilunnn/qutils.git@main"
 ]
 
