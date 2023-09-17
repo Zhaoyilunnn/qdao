@@ -20,4 +20,4 @@ jobs:
         pip install pytest
     - name: Run unit test with pytest
       run: |
-        pylint tests/
+        pytest tests/
