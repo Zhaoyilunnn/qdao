@@ -2,7 +2,6 @@ import logging
 from typing import Optional
 
 import numpy as np
-from mqt import ddsim
 from qiskit_aer import Aer
 from qdao.exceptions import QdaoError
 
@@ -16,6 +15,7 @@ class QiskitSimulator:
     ) -> None:
         if provider:
             if provider == "ddsim":
+                from mqt import ddsim
                 self._sim = ddsim.DDSIMProvider().get_backend("qasm_simulator")
         else:
             self._sim = Aer.get_backend("aer_simulator")
