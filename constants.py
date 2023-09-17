@@ -61,4 +61,5 @@ LARGE_BENCHES = [
     "wstate_n27"
 ]
 
+QCS_URL = "https://github.com/Zhaoyilunnn/qcs.git"
 QCS_BENCHMARKS_DIR = os.path.join(WORK_DIR, "qcs/benchmarks/qasm/")
