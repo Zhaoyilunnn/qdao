@@ -1,7 +1,5 @@
 import sys
 
-sys.path.append("/root/projects/qcs")
-
 from qdao.util import indexes
 
 # 00000010
