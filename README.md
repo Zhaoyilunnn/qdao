@@ -5,11 +5,8 @@
 ------
 
 
-<br />
 <p align="center">
-  <a href="https://qiskit.org/">
-    <img alt="QDAO" src="assets/logo.png" width="200" />
-  </a>
+  <img alt="QDAO" src="assets/logo.png" width="400" />
 </p>
 
 
