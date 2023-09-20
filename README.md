@@ -2,7 +2,7 @@
 [![qiskit](https://img.shields.io/badge/qiskit%20community-8A2BE2)](https://qiskit.org/ecosystem)
 
 
-------
+---
 
 
 <p align="center">
