@@ -6,7 +6,7 @@
 
 
 <p align="center">
-  <img alt="QDAO" src="assets/logo.png" width="400" />
+  <img alt="QDAO" src="assets/logo.svg" width="400" />
 </p>
 
 
