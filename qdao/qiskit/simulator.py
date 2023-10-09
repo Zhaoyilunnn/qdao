@@ -16,6 +16,7 @@ class QiskitSimulator:
         if provider:
             if provider == "ddsim":
                 from mqt import ddsim
+
                 self._sim = ddsim.DDSIMProvider().get_backend("qasm_simulator")
         else:
             self._sim = Aer.get_backend("aer_simulator")

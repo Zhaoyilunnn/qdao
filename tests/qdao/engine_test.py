@@ -195,9 +195,9 @@ class TestEngine(QdaoBaseTest):
         circ = transpile(circ, self._sv_sim)
         self.run_qiskit_diff_test(circ, NQ, NP, NL, mode)
 
-    @pytest.mark.skip(
-        reason="turn off automatic detection of this test since it is not necessary"
-    )
+    # @pytest.mark.skip(
+    #     reason="turn off automatic detection of this test since it is not necessary"
+    # )
     def test_run_qiskit_random(self, nq):
         NQ = int(nq)
         NP = NQ - 2
@@ -517,9 +517,9 @@ class TestEngine(QdaoBaseTest):
         circ = qiskit.circuit.QuantumCircuit.from_qasm_file(qasm_path)
         self.run_quafu_diff_test(circ, NQ, NP, NL)
 
-    @pytest.mark.skip(
-        reason="turn off automatic detection of this test since it is not necessary"
-    )
+    # @pytest.mark.skip(
+    #     reason="turn off automatic detection of this test since it is not necessary"
+    # )
     def test_run_quafu_random_single_vs_qiskit_with_init(self, nq):
         NQ = int(nq)
 

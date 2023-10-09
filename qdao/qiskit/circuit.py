@@ -53,7 +53,7 @@ class QiskitCircuitHelper:
         nq = self._circ.num_qubits
         circ = QuantumCircuit(nq)
         # FIXME: To test the performance of qiskit, do not initialize
-        # circ.initialize(sv, range(nq))
+        circ.initialize(sv, range(nq))
         circ.compose(self._circ, inplace=True)
         return QdaoSimObj(sv, circ)
 
