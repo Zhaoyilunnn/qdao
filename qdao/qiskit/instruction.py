@@ -30,7 +30,7 @@ Instructions are identified by the following:
 Instructions do not have any context about where they are in a circuit (which qubits/clbits).
 The circuit itself keeps this context.
 """
-
+import logging
 import copy
 import time
 from itertools import zip_longest
@@ -238,7 +238,7 @@ class Instruction(Operation):
         ##self._params = list(parameters)
         # self._params = parameters.tolist()
         self._params = parameters
-        print("Time of setting params: {}".format(time.time() - st))
+        logging.info("Time of setting params: {}".format(time.time() - st))
 
         # for single_param in parameters:
         #    if isinstance(single_param, ParameterExpression):
