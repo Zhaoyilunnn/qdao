@@ -9,14 +9,14 @@
 *core*
 *dist
 *egg-info
-*ipynb
 *temp*
 *tmp
 .ccls-cache*
+.ipynb_checkpoints/
 .tox
-qcs
 __pycache__*
 nohup.out
+qcs
 sim-beta/.ccls*
 sim-beta/Debug
 sim-beta/build

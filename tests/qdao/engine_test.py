@@ -556,7 +556,7 @@ class TestEngine(QdaoBaseTest):
         sv_qiskit = self._sv_sim.run(init_circ).result().get_statevector()
 
         # FIXME(zhaoyilun): when testing small circuits, uncomment this
-        # assert sv_qiskit.equiv(Statevector(sv_quafu))
+        assert sv_qiskit.equiv(Statevector(sv_quafu))
         # print(sv_quafu)
         # print(sv_qiskit.data)
 

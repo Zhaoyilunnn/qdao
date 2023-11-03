@@ -3,12 +3,14 @@ from typing import List, Optional
 import numpy as np
 from qiskit.circuit import CircuitInstruction, QuantumCircuit
 
+from qdao.base_circuit_wrapper import BaseCircWrapper
+
 from .initializer import initialize
 
 QuantumCircuit.initialize = initialize
 
 
-class QiskitCircuitHelper:
+class QiskitCircuitWrapper(BaseCircWrapper):
     def __init__(self, circ: Optional[QuantumCircuit] = None) -> None:
         self._circ = circ or None
 

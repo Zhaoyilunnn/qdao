@@ -3,6 +3,7 @@ import logging
 from typing import List, Optional
 
 import numpy as np
+from qdao.base_circuit_wrapper import BaseCircWrapper
 from quafu.circuits.quantum_circuit import (
     ControlledGate,
     QuantumCircuit,
@@ -11,7 +12,7 @@ from quafu.circuits.quantum_circuit import (
 )
 
 
-class QuafuCircuitHelper:
+class QuafuCircuitHelper(BaseCircWrapper):
     def __init__(self, circ: Optional[QuantumCircuit] = None) -> None:
         self._circ = circ or None
 

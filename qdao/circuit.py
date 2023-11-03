@@ -5,7 +5,7 @@ into sub-circuits.
 import logging
 from typing import Any, List
 
-from qdao.qiskit.circuit import QiskitCircuitHelper
+from qdao.qiskit.circuit import QiskitCircuitWrapper
 from qdao.quafu.circuit import QuafuCircuitHelper
 
 
@@ -116,17 +116,17 @@ class StaticPartitioner(BasePartitioner):
 PARTITIONERS = {"baseline": BaselinePartitioner, "static": StaticPartitioner}
 
 
-INITIALIZERS = {"qiskit": QiskitCircuitHelper, "quafu": QuafuCircuitHelper}
+INITIALIZERS = {"qiskit": QiskitCircuitWrapper, "quafu": QuafuCircuitHelper}
 
 
 class PartitionerProvider:
     @classmethod
     def get_partitioner(
         cls,
-        part_name: str,
+        name: str,
         **configs,
     ):
-        return PARTITIONERS[part_name](**configs)
+        return PARTITIONERS[name](**configs)
 
 
 class CircuitHelperProvider:
