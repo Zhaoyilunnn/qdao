@@ -65,6 +65,10 @@ There are some key features to be supported in the future
  - [x] GPU simulation
  - [ ] Noisy simulation
 
+# Issues
+
+Please file an issue or contact zyilun8@gmail.com if you encounter any problems.
+
 # Limitations
 Setting smaller memory requirement leads to larger performance overhead. This can be more severe when using qiskit backend as setting initial statevector in qiskit incurs additional data copy, this problem is avoided in [pyquafu](https://github.com/ScQ-Cloud/pyquafu), although pyquafu is slower than qiskit.
 
