@@ -73,6 +73,6 @@ Please file an issue or contact zyilun8@gmail.com if you encounter any problems.
 Setting smaller memory requirement leads to larger performance overhead. This can be more severe when using qiskit backend as setting initial statevector in qiskit incurs additional data copy, this problem is avoided in [pyquafu](https://github.com/ScQ-Cloud/pyquafu), although pyquafu is slower than qiskit.
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbODI1MjA3MjgxLC0xNjQ3MjEyMzY0LC0zMD
-Q1NzcyMDVdfQ==
+eyJoaXN0b3J5IjpbLTE5MDg4OTI4NjcsODI1MjA3MjgxLC0xNj
+Q3MjEyMzY0LC0zMDQ1NzcyMDVdfQ==
 -->
