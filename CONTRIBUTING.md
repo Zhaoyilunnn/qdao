@@ -3,6 +3,7 @@
 # Development
 Fork this repository
 ```bash
+pip install -r requirements.txt
 pip install -e .
 ```
 
@@ -47,3 +48,7 @@ Install [tox](https://tox.wiki/en/4.11.3/installation.html) following the offici
 ```bash
 tox run
 ```
+It is encouraged to build similar unit test for newly supported backend. 
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbLTk2Njk5Mjk2Ml19
+-->
