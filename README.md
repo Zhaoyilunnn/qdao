@@ -66,7 +66,7 @@ eng = Engine(circuit=quafu_circ, num_primary=num_primary, num_local=num_local, b
 eng.run()
 ```
 
-We're working on to supported measurement in qdao, currently please obtain state vector after simulation as follows.
+We're working on to support measurement in qdao, currently please obtain state vector after simulation as follows.
 
 ```
 from qdao.util import retrieve_sv
