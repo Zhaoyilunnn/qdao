@@ -22,7 +22,7 @@ pytest tests/
 
 The following code snippet shows the basic usage of qdao. You can configure the `num_primary` parameter to reduce the memory occupation.
 
-$\text{memory consumption} = 2^{num\_primary} * 16 \text{ Byte}$
+$\text{memory consumption} = 2^{\text{num-primary}} * 16 \text{ Byte}$
 
 ```Python
 from qdao import Engine
