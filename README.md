@@ -20,7 +20,10 @@ pytest tests/
 
 # Usage
 
-The following code snippet shows the basic usage of qdao. You can configure the `num_primary` parameter to reduce the memory occupation. In this example, a 28-qubit circuit (4 GB memory requirement) to configured to use only 1 GB memory (`num_primary=26`, i.e., $2^{26} * 16 \text{ Byte} = 1\text{ GB}$).
+The following code snippet shows the basic usage of qdao. You can configure the `num_primary` parameter to reduce the memory occupation.
+
+`memory = 2^{num\_primary} * 16 \text{ Byte}`
+
 ```Python
 from qdao import Engine
 from qiskit.circuit.random import random_circuit
@@ -28,19 +31,35 @@ from qiskit import transpile
 from qiskit_aer import Aer
 
 # Create a qiskit quantum circuit `circ`
-circ = random_circuit(28, 20, measure=False)
+circ = random_circuit(12, 10, measure=False, max_operands=2)
 backend = Aer.get_backend("aer_simulator")
 circ = transpile(circ, backend=backend)
 
 # `num_primary`: size of a compute unit
 # `num_local`: size of a storage unit
-eng = Engine(circuit=circ, num_primary=26, num_local=22)
+eng = Engine(circuit=circ, num_primary=10, num_local=8)
 eng.run()
 ```
 
-To use GPU for simulation and use host memory to store the entire statevector, try following configurations
+To use GPU for simulation and use host memory to store the entire statevector, try following configurations.
+
+First you need to install `qiskit-aer-gpu`. Please refer to the [official document](https://github.com/Qiskit/qiskit-aer).
+
 ```Python
-eng = Engine(circuit=circ, num_primary=26, num_local=22, sv_location="memory", device="GPU")
+eng = Engine(circuit=circ, num_primary=10, num_local=8, sv_location="memory", device="GPU")
+```
+
+You can specify a backend simulator by using `backend` option, currently only qiskit and pyquafu are supported.
+
+```
+# First transform qiskit circuit to a quafu circuit
+from quafu import QuantumCircuit
+quafu_circ = QuantumCircuit(1)
+quafu_circ.from_openqasm(circ.qasm())
+
+# Create a new engine using quafu backend
+eng = Engine(circuit=quafu_circ, num_primary=10, num_local=8, backend="quafu")
+eng.run()
 ```
 
 # Citation
