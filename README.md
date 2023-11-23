@@ -55,7 +55,7 @@ eng = Engine(circuit=circ, num_primary=num_primary, num_local=num_local, sv_loca
 
 You can specify a backend simulator by using `backend` option, currently only qiskit and pyquafu are supported.
 
-```
+```Python
 # First transform qiskit circuit to a quafu circuit
 from quafu import QuantumCircuit
 quafu_circ = QuantumCircuit(1)
@@ -68,7 +68,7 @@ eng.run()
 
 We're working on to support measurement in qdao, currently please obtain state vector after simulation as follows.
 
-```
+```Python
 from qdao.util import retrieve_sv
 res = retrieve_sv(num_qubits, num_local=num_local)
 print(res)
