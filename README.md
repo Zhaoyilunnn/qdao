@@ -30,14 +30,18 @@ from qiskit.circuit.random import random_circuit
 from qiskit import transpile
 from qiskit_aer import Aer
 
+num_qubits = 12
+num_primary = 10
+num_local = 8
+
 # Create a qiskit quantum circuit `circ`
-circ = random_circuit(12, 10, measure=False, max_operands=2)
+circ = random_circuit(num_qubits, 10, measure=False, max_operands=2)
 backend = Aer.get_backend("aer_simulator")
 circ = transpile(circ, backend=backend)
 
 # `num_primary`: size of a compute unit
 # `num_local`: size of a storage unit
-eng = Engine(circuit=circ, num_primary=10, num_local=8)
+eng = Engine(circuit=circ, num_primary=num_primary, num_local=num_local)
 eng.run()
 ```
 
@@ -46,7 +50,7 @@ To use GPU for simulation and use host memory to store the entire statevector, t
 First you need to install `qiskit-aer-gpu`. Please refer to the [official document](https://github.com/Qiskit/qiskit-aer).
 
 ```Python
-eng = Engine(circuit=circ, num_primary=10, num_local=8, sv_location="memory", device="GPU")
+eng = Engine(circuit=circ, num_primary=num_primary, num_local=num_local, sv_location="memory", device="GPU")
 ```
 
 You can specify a backend simulator by using `backend` option, currently only qiskit and pyquafu are supported.
@@ -58,8 +62,16 @@ quafu_circ = QuantumCircuit(1)
 quafu_circ.from_openqasm(circ.qasm())
 
 # Create a new engine using quafu backend
-eng = Engine(circuit=quafu_circ, num_primary=10, num_local=8, backend="quafu")
+eng = Engine(circuit=quafu_circ, num_primary=num_primary, num_local=num_local, backend="quafu")
 eng.run()
+```
+
+We're working on to supported measurement in qdao, currently please obtain state vector after simulation as follows.
+
+```
+from qdao.util import retrieve_sv
+res = retrieve_sv(num_qubits, num_local=num_local)
+print(res)
 ```
 
 # Citation
