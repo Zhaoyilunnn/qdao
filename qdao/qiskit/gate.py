@@ -63,12 +63,12 @@ class Gate(Instruction):
             exponent (float): Gate^exponent
 
         Returns:
-            qiskit.extensions.UnitaryGate: To which `to_matrix` is self.to_matrix^exponent.
+            qiskit.circuit.library.UnitaryGate: To which `to_matrix` is self.to_matrix^exponent.
 
         Raises:
             CircuitError: If Gate is not unitary
         """
-        from qiskit.extensions.unitary import (
+        from qiskit.circuit.library import (
             UnitaryGate,
         )  # pylint: disable=cyclic-import
         from qiskit.quantum_info.operators import (

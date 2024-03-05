@@ -42,7 +42,7 @@ from qiskit.circuit.exceptions import CircuitError
 from qiskit.circuit.operation import Operation
 from qiskit.circuit.parameter import ParameterExpression
 from qiskit.circuit.quantumregister import QuantumRegister
-from qiskit.qasm.exceptions import QasmError
+from qiskit.qasm2 import QASM2Error
 from qiskit.qobj.qasm_qobj import QasmQobjInstruction
 
 from .tools import pi_check
@@ -476,7 +476,7 @@ class Instruction(Operation):
         if self.condition is None:
             return string
         if not isinstance(self.condition[0], ClassicalRegister):
-            raise QasmError(
+            raise Qasm2Error(
                 "OpenQASM 2 can only condition on registers, but got '{self.condition[0]}'"
             )
         return "if(%s==%d) " % (self.condition[0].name, self.condition[1]) + string
