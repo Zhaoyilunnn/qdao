@@ -103,7 +103,10 @@ Please file an issue or contact zyilun8@gmail.com if you encounter any problems.
 # Limitations
 Setting smaller memory requirement leads to larger performance overhead. This can be more severe when using qiskit backend as setting initial statevector in qiskit incurs additional data copy, this problem is avoided in [pyquafu](https://github.com/ScQ-Cloud/pyquafu), although pyquafu is slower than qiskit.
 
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE5MDg4OTI4NjcsODI1MjA3MjgxLC0xNj
-Q3MjEyMzY0LC0zMDQ1NzcyMDVdfQ==
--->
+For `qiskit < 1.0`, we have modified some source code of qiskit to avoid unnecessary logic that incurs performance issue. However, this fix is not yet finished for `qiskit >= 1.0`. Please expect slow performance using `qiskit >= 1.0` due to the performance overhead when setting initial state vector.
+
+We are working on this [issue](https://github.com/Zhaoyilunnn/qdao/issues/14).
+
+Ultimately, we plan to implementa a customized C++ simulator as backend to avoid this issue.
+
+For now, it is strongly recommended to use `quafu` backend for better performance.
