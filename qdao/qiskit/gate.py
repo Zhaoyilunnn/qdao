@@ -12,12 +12,15 @@
 
 """Unitary gate."""
 
-from typing import List, Optional, Tuple, Union
+from __future__ import annotations
+
+from typing import Iterable, Iterator
 
 import numpy as np
 from qiskit.circuit.exceptions import CircuitError
 from qiskit.circuit.parameterexpression import ParameterExpression
 
+from .annotated_operation import AnnotatedOperation, ControlModifier
 from .instruction import Instruction
 
 
@@ -25,7 +28,13 @@ class Gate(Instruction):
     """Unitary gate."""
 
     def __init__(
-        self, name: str, num_qubits: int, params: List, label: Optional[str] = None
+        self,
+        name: str,
+        num_qubits: int,
+        params: list,
+        label: str | None = None,
+        duration=None,
+        unit="dt",
     ) -> None:
         """Create a new gate.
 
@@ -36,7 +45,9 @@ class Gate(Instruction):
             label: An optional label for the gate.
         """
         self.definition = None
-        super().__init__(name, num_qubits, 0, params, label=label)
+        super().__init__(
+            name, num_qubits, 0, params, label=label, duration=duration, unit=unit
+        )
 
     # Set higher priority than Numpy array and matrix classes
     __array_priority__ = 20
@@ -52,7 +63,6 @@ class Gate(Instruction):
                 exception will be raised when this base class method is called.
         """
         if hasattr(self, "__array__"):
-            # pylint: disable=no-member
             return self.__array__(dtype=complex)
         raise CircuitError(f"to_matrix not defined for this {type(self)}")
 
@@ -63,34 +73,21 @@ class Gate(Instruction):
             exponent (float): Gate^exponent
 
         Returns:
-            qiskit.circuit.library.UnitaryGate: To which `to_matrix` is self.to_matrix^exponent.
+            .library.UnitaryGate: To which `to_matrix` is self.to_matrix^exponent.
 
         Raises:
             CircuitError: If Gate is not unitary
         """
-        from qiskit.circuit.library import (
-            UnitaryGate,
-        )  # pylint: disable=cyclic-import
-        from qiskit.quantum_info.operators import (
-            Operator,
-        )  # pylint: disable=cyclic-import
-        from scipy.linalg import schur
+        # pylint: disable=cyclic-import
+        from qiskit.circuit.library.generalized_gates.unitary import UnitaryGate
+        from qiskit.quantum_info.operators import Operator
 
-        # Should be diagonalized because it's a unitary.
-        decomposition, unitary = schur(Operator(self).data, output="complex")
-        # Raise the diagonal entries to the specified power
-        decomposition_power = []
+        return UnitaryGate(
+            Operator(self).power(exponent), label=f"{self.name}^{exponent}"
+        )
 
-        decomposition_diagonal = decomposition.diagonal()
-        # assert off-diagonal are 0
-        if not np.allclose(np.diag(decomposition_diagonal), decomposition):
-            raise CircuitError("The matrix is not diagonal")
-
-        for element in decomposition_diagonal:
-            decomposition_power.append(pow(element, exponent))
-        # Then reconstruct the resulting gate.
-        unitary_power = unitary @ np.diag(decomposition_power) @ unitary.conj().T
-        return UnitaryGate(unitary_power, label=f"{self.name}^{exponent}")
+    def __pow__(self, exponent: float) -> "Gate":
+        return self.power(exponent)
 
     def _return_repeat(self, exponent: float) -> "Gate":
         return Gate(
@@ -102,32 +99,45 @@ class Gate(Instruction):
     def control(
         self,
         num_ctrl_qubits: int = 1,
-        label: Optional[str] = None,
-        ctrl_state: Optional[Union[int, str]] = None,
+        label: str | None = None,
+        ctrl_state: int | str | None = None,
+        annotated: bool = False,
     ):
-        """Return controlled version of gate. See :class:`.ControlledGate` for usage.
+        """
+        Return the controlled version of itself.
+
+        Implemented either as a controlled gate (ref. :class:`.ControlledGate`)
+        or as an annotated operation (ref. :class:`.AnnotatedOperation`).
 
         Args:
-            num_ctrl_qubits: number of controls to add to gate (default=1)
-            label: optional gate label
-            ctrl_state: The control state in decimal or as a bitstring
-                (e.g. '111'). If None, use 2**num_ctrl_qubits-1.
+            num_ctrl_qubits: number of controls to add to gate (default: ``1``)
+            label: optional gate label. Ignored if implemented as an annotated
+                operation.
+            ctrl_state: the control state in decimal or as a bitstring
+                (e.g. ``'111'``). If ``None``, use ``2**num_ctrl_qubits-1``.
+            annotated: indicates whether the controlled gate can be implemented
+                as an annotated gate.
 
         Returns:
-            qiskit.circuit.ControlledGate: Controlled version of gate. This default algorithm
-            uses num_ctrl_qubits-1 ancillae qubits so returns a gate of size
-            num_qubits + 2*num_ctrl_qubits - 1.
+            Controlled version of the given operation.
 
         Raises:
             QiskitError: unrecognized mode or invalid ctrl_state
         """
-        # pylint: disable=cyclic-import
-        from .add_control import add_control
+        if not annotated:
+            # pylint: disable=cyclic-import
+            from .add_control import add_control
 
-        return add_control(self, num_ctrl_qubits, label, ctrl_state)
+            return add_control(self, num_ctrl_qubits, label, ctrl_state)
+
+        else:
+            return AnnotatedOperation(
+                self,
+                ControlModifier(num_ctrl_qubits=num_ctrl_qubits, ctrl_state=ctrl_state),
+            )
 
     @staticmethod
-    def _broadcast_single_argument(qarg: List) -> List:
+    def _broadcast_single_argument(qarg: list) -> Iterator[tuple[list, list]]:
         """Expands a single argument.
 
         For example: [q[0], q[1]] -> [q[0]], [q[1]]
@@ -138,7 +148,7 @@ class Gate(Instruction):
             yield [arg0], []
 
     @staticmethod
-    def _broadcast_2_arguments(qarg0: List, qarg1: List) -> List:
+    def _broadcast_2_arguments(qarg0: list, qarg1: list) -> Iterator[tuple[list, list]]:
         if len(qarg0) == len(qarg1):
             # [[q[0], q[1]], [r[0], r[1]]] -> [q[0], r[0]]
             #                              -> [q[1], r[1]]
@@ -160,7 +170,7 @@ class Gate(Instruction):
             )
 
     @staticmethod
-    def _broadcast_3_or_more_args(qargs: List) -> List:
+    def _broadcast_3_or_more_args(qargs: list) -> Iterator[tuple[list, list]]:
         if all(len(qarg) == len(qargs[0]) for qarg in qargs):
             for arg in zip(*qargs):
                 yield list(arg), []
@@ -169,7 +179,9 @@ class Gate(Instruction):
                 "Not sure how to combine these qubit arguments:\n %s\n" % qargs
             )
 
-    def broadcast_arguments(self, qargs: List, cargs: List) -> Tuple[List, List]:
+    def broadcast_arguments(
+        self, qargs: list, cargs: list
+    ) -> Iterable[tuple[list, list]]:
         """Validation and handling of the arguments and its relationship.
 
         For example, ``cx([q[0],q[1]], q[2])`` means ``cx(q[0], q[2]); cx(q[1], q[2])``. This
@@ -215,6 +227,10 @@ class Gate(Instruction):
         if any(not qarg for qarg in qargs):
             raise CircuitError("One or more of the arguments are empty")
 
+        if len(qargs) == 0:
+            return [
+                ([], []),
+            ]
         if len(qargs) == 1:
             return Gate._broadcast_single_argument(qargs[0])
         elif len(qargs) == 2:

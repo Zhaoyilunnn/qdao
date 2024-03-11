@@ -15,17 +15,19 @@ import math
 from typing import Optional, Union
 
 import numpy as np
-from qiskit.circuit import QuantumCircuit, QuantumRegister, Qubit
 from qiskit.circuit.exceptions import CircuitError
+from qiskit.circuit.gate import Gate
 from qiskit.circuit.library.standard_gates.h import HGate
 from qiskit.circuit.library.standard_gates.ry import RYGate
 from qiskit.circuit.library.standard_gates.rz import RZGate
 from qiskit.circuit.library.standard_gates.s import SdgGate, SGate
 from qiskit.circuit.library.standard_gates.x import CXGate, XGate
+from qiskit.circuit.quantumcircuit import QuantumCircuit
+from qiskit.circuit.quantumregister import QuantumRegister
 from qiskit.exceptions import QiskitError
-from qiskit.quantum_info import Statevector
-
-from qdao.qiskit.gate import Gate
+from qiskit.quantum_info.states.statevector import (  # pylint: disable=cyclic-import
+    Statevector,
+)
 
 _EPS = 1e-10  # global variable used to chop very small numbers to zero
 
@@ -43,6 +45,7 @@ class StatePreparation(Gate):
         num_qubits: Optional[int] = None,
         inverse: bool = False,
         label: Optional[str] = None,
+        normalize: bool = False,
     ):
         r"""
         Args:
@@ -63,6 +66,7 @@ class StatePreparation(Gate):
                 and the remaining 3 qubits to be initialized to :math:`|0\rangle`.
             inverse: if True, the inverse state is constructed.
             label: An optional label for the gate
+            normalize (bool): Whether to normalize an input array to a unit vector.
 
         Raises:
             QiskitError: ``num_qubits`` parameter used when ``params`` is not an integer
@@ -98,8 +102,16 @@ class StatePreparation(Gate):
         self._from_label = isinstance(params, str)
         self._from_int = isinstance(params, int)
 
-        num_qubits = self._get_num_qubits(num_qubits, params)
+        # FIXME(): QDAO requires initialization from sub-state-vector thus sum of amplitudes can be smaller than 1
+        # if initialized from a vector, check that the parameters are normalized
+        # if not self._from_label and not self._from_int:
+        #     norm = np.linalg.norm(params)
+        #     if normalize:
+        #         params = np.array(params, dtype=np.complex128) / norm
+        #     elif not math.isclose(norm, 1.0, abs_tol=_EPS):
+        #         raise QiskitError(f"Sum of amplitudes-squared is not 1, but {norm}.")
 
+        num_qubits = self._get_num_qubits(num_qubits, params)
         params = [params] if isinstance(params, int) else params
 
         super().__init__(self._name, num_qubits, params, label=self._label)
@@ -201,15 +213,10 @@ class StatePreparation(Gate):
                     "Desired statevector length not a positive power of 2."
                 )
 
-            # FIXME: We need partial initialization and we suppress this
-            ## Check if probabilities (amplitudes squared) sum to 1
-            # if not math.isclose(sum(np.absolute(params) ** 2), 1.0, abs_tol=_EPS):
-            #    raise QiskitError("Sum of amplitudes-squared does not equal one.")
-
             num_qubits = int(num_qubits)
         return num_qubits
 
-    def inverse(self):
+    def inverse(self, annotated: bool = False):
         """Return inverted StatePreparation"""
 
         label = (
@@ -430,111 +437,3 @@ class StatePreparation(Gate):
             circuit.append(CXGate(), [msb, lsb])
 
         return circuit
-
-
-def prepare_state(self, state, qubits=None, label=None):
-    r"""Prepare qubits in a specific state.
-
-    This class implements a state preparing unitary. Unlike
-    :class:`qiskit.extensions.Initialize` it does not reset the qubits first.
-
-    Args:
-        state (str or list or int or Statevector):
-            * Statevector: Statevector to initialize to.
-            * str: labels of basis states of the Pauli eigenstates Z, X, Y. See
-              :meth:`.Statevector.from_label`. Notice the order of the labels is reversed with respect
-              to the qubit index to be applied to. Example label '01' initializes the qubit zero to
-              :math:`|1\rangle` and the qubit one to :math:`|0\rangle`.
-            * list: vector of complex amplitudes to initialize to.
-            * int: an integer that is used as a bitmap indicating which qubits to initialize
-              to :math:`|1\rangle`. Example: setting params to 5 would initialize qubit 0 and qubit 2
-              to :math:`|1\rangle` and qubit 1 to :math:`|0\rangle`.
-
-        qubits (QuantumRegister or Qubit or int):
-            * QuantumRegister: A list of qubits to be initialized [Default: None].
-            * Qubit: Single qubit to be initialized [Default: None].
-            * int: Index of qubit to be initialized [Default: None].
-            * list: Indexes of qubits to be initialized [Default: None].
-        label (str): An optional label for the gate
-
-    Returns:
-        qiskit.circuit.Instruction: a handle to the instruction that was just initialized
-
-    Examples:
-        Prepare a qubit in the state :math:`(|0\rangle - |1\rangle) / \sqrt{2}`.
-
-        .. jupyter-execute::
-
-            import numpy as np
-            from qiskit import QuantumCircuit
-
-            circuit = QuantumCircuit(1)
-            circuit.prepare_state([1/np.sqrt(2), -1/np.sqrt(2)], 0)
-            circuit.draw()
-
-        output:
-
-        .. parsed-literal::
-
-                 ┌─────────────────────────────────────┐
-            q_0: ┤ State Preparation(0.70711,-0.70711) ├
-                 └─────────────────────────────────────┘
-
-
-        Prepare from a string two qubits in the state :math:`|10\rangle`.
-        The order of the labels is reversed with respect to qubit index.
-        More information about labels for basis states are in
-        :meth:`.Statevector.from_label`.
-
-        .. jupyter-execute::
-
-            import numpy as np
-            from qiskit import QuantumCircuit
-
-            circuit = QuantumCircuit(2)
-            circuit.prepare_state('01', circuit.qubits)
-            circuit.draw()
-
-        output:
-
-        .. parsed-literal::
-
-                 ┌─────────────────────────┐
-            q_0: ┤0                        ├
-                 │  State Preparation(0,1) │
-            q_1: ┤1                        ├
-                 └─────────────────────────┘
-
-
-        Initialize two qubits from an array of complex amplitudes
-        .. jupyter-execute::
-
-            import numpy as np
-            from qiskit import QuantumCircuit
-
-            circuit = QuantumCircuit(2)
-            circuit.prepare_state([0, 1/np.sqrt(2), -1.j/np.sqrt(2), 0], circuit.qubits)
-            circuit.draw()
-
-        output:
-
-        .. parsed-literal::
-
-                 ┌───────────────────────────────────────────┐
-            q_0: ┤0                                          ├
-                 │  State Preparation(0,0.70711,-0.70711j,0) │
-            q_1: ┤1                                          ├
-                 └───────────────────────────────────────────┘
-    """
-
-    if qubits is None:
-        qubits = self.qubits
-    elif isinstance(qubits, (int, np.integer, slice, Qubit)):
-        qubits = [qubits]
-
-    num_qubits = len(qubits) if isinstance(state, int) else None
-
-    return self.append(StatePreparation(state, num_qubits, label=label), qubits)
-
-
-QuantumCircuit.prepare_state = prepare_state

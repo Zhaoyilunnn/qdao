@@ -5,9 +5,9 @@ from qiskit.circuit import CircuitInstruction, QuantumCircuit
 
 from qdao.base_circuit_wrapper import BaseCircWrapper
 
-from .initializer import initialize
-
-QuantumCircuit.initialize = initialize
+# from .initializer import initialize
+#
+# QuantumCircuit.initialize = initialize
 
 
 class QiskitCircuitWrapper(BaseCircWrapper):
@@ -49,13 +49,15 @@ class QiskitCircuitWrapper(BaseCircWrapper):
         """
         from qdao.simulator import QdaoSimObj
 
+        from .data_preparation.initializer import Initialize
+
         if not isinstance(self._circ, QuantumCircuit):
             raise ValueError("Please set circ before initializing from sv!")
 
         nq = self._circ.num_qubits
         circ = QuantumCircuit(nq)
         # FIXME: To test the performance of qiskit, do not initialize
-        circ.initialize(sv, range(nq))
+        circ.append(Initialize(sv), range(nq))
         circ.compose(self._circ, inplace=True)
         return QdaoSimObj(sv, circ)
 
