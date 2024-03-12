@@ -20,6 +20,8 @@ pytest tests/
 
 # Usage
 
+The following example can be found in the `examples/` directory and more examples will be added in the future.
+
 The following code snippet shows the basic usage of qdao. You can configure the `num_primary` parameter to reduce the memory occupation.
 
 $\text{memory consumption} = 2^{\text{num-primary}} * 16 \text{ Byte}$
@@ -59,7 +61,13 @@ You can specify a backend simulator by using `backend` option, currently only qi
 # First transform qiskit circuit to a quafu circuit
 from quafu import QuantumCircuit
 quafu_circ = QuantumCircuit(1)
+
+# For qiskit < 1.0
 quafu_circ.from_openqasm(circ.qasm())
+
+# For qiskit >= 1.0, `qasm()` api has been deprecated.
+from qiskit.qasm2 import dumps
+quafu_circ.from_openqasm(dumps(circ))
 
 # Create a new engine using quafu backend
 eng = Engine(circuit=quafu_circ, num_primary=num_primary, num_local=num_local, backend="quafu")

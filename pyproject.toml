@@ -1,6 +1,6 @@
 [project]
 name = "qdao"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
     "cirq_core==1.1.0",
     "matplotlib==3.6.3",
@@ -10,8 +10,9 @@ dependencies = [
     "setuptools>=65.5.1",
     "sympy==1.11.1",
     "pyquafu==0.3.5",
+    "pytest>=7.4.1",
     "qutils @ git+https://github.com/Zhaoyilunnn/qutils.git@main"
 ]
 
 [tool.setuptools.packages.find]
-include = ["qdao"]
+include = ["qdao*"]
