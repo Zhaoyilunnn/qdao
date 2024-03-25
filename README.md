@@ -131,23 +131,29 @@ There are some key features to be supported in the future
 
 # Limitations
 
-## Performance Overhead with Qiskit Backend
 When using qiskit backend, setting initial statevector in qiskit incurs significant overhead due To
-1. Qiskit treats state vector as parameters and implements time-coonsuming validation logics
-2. There exists additional data copy when submitting circuit with initial state vector to Ae
-
-, this problem is avoided in [pyquafu](https://github.com/ScQ-Cloud/pyquafu), although pyquafu is slower than qiskit. For `qiskit < 1.0`, we have modified some source code of qiskit to avoid unnecessary logic that incurs performance issue. However, this [issue](https://github.com/Zhaoyilunnn/qdao/issues/14) is not yet finished for `qiskit >= 1.0`. Please expect slow performance using `qiskit >= 1.0` due to the performance overhead when setting initial state vector. For now, it is strongly recommended to use `quafu` backend for better performance. Ultimately, we plan to implementa a customized C++ simulator as backend to avoid this issue.
+1. Qiskit treats state vector as parameters and implements time-coonsuming validation logics, see https://github.com/Zhaoyilunnn/qdao/issues/14.
+2. There exists additional data copy when submitting circuit with initial state vector to Aer. E.g., if you set 1 GB initial state vector, it actually consumes 2 GB memory during simulation.
 
 
-## Using Older Qiskit Version
+## Short-Term Solutions
 
-To alleviate the performance overhead with Qiskit, we have done some hack in qiskit source code
+1. You can use the tagged stable version, which requires qiskit < 1.0 and we did some tricky modifications in qiskit to eliminate the validation overhead.
 
 ```bash
 
 git checkout stable/0.1
 pip install .
 ```
+
+2. You can use `quafu` backend. Algthough itself is slower than Qiskit, it does not have the problems of qiskit when using QDAO. Indeed, QDAO-PyQuafu is faster than QDAO-Qiskit for large circuit (>=28 Qubits).
+
+3. Since the additional overhead of qiskit is completely implementation issue, you might want to measure the ideal performance of QDAO-Qiskit. To do so, you could comment [this line](https://github.com/Zhaoyilunnn/qdao/blob/v0.1.0/qdao/qiskit/circuit.py#L58), which however leads to wrong simulations results.
+
+
+## Long-Term
+
+- We will implement a customized C++ high-performance backend and integrate it into QDAO. Please stay tuned.
 
 
 # Issues
