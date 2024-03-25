@@ -1,6 +1,22 @@
 [![Tests](https://github.com/Zhaoyilunnn/qdao/actions/workflows/unit_test.yml/badge.svg?branch=main)](https://github.com/Zhaoyilunnn/qdao/actions/workflows/unit_test.yml)
 [![qiskit](https://img.shields.io/badge/qiskit%20community-8A2BE2)](https://qiskit.org/ecosystem)
 
+- [What is QDAO](#what-is-qdao)
+- [Install](#install)
+- [Testing](#testing)
+- [Usage](#usage)
+  * [Basic Usage](#basic-usage)
+  * [GPU Simulation](#gpu-simulation)
+  * [Backends](#backends)
+  * [Get Simulation Results](#get-simulation-results)
+- [Citation](#citation)
+- [Development](#development)
+- [Features](#features)
+- [Limitations](#limitations)
+  * [Short-Term Solutions](#short-term-solutions)
+  * [Long-Term](#long-term)
+- [Issues](#issues)
+
 
 # What is qdao
 qdao is a **q**uantum **d**ata **a**ccess **o**ptimization framework. It leverages secondary storage to simulate large scale quantum circuits and minimizes the data movement between memory and secondary storage. The memory requirement of full state quantum circuit simulation grows exponentially with the number of qubits. For example, on a typical PC, simulate a circuit with more than 30 qubits can easily result in out-of-memory error. With qdao, the memory occupation of simulation is  completely under your control.
@@ -19,6 +35,8 @@ pytest tests/
 ```
 
 # Usage
+
+## Basic Usage
 
 The following example can be found in the `examples/` directory and more examples will be added in the future.
 
@@ -41,11 +59,13 @@ circ = random_circuit(num_qubits, 10, measure=False, max_operands=2)
 backend = Aer.get_backend("aer_simulator")
 circ = transpile(circ, backend=backend)
 
-# `num_primary`: size of a compute unit
-# `num_local`: size of a storage unit
+# `num_primary`: size of a compute unit, i.e., $m$ in QDAO paper
+# `num_local`: size of a storage unit, i.e., $t$ in QDAO paper
 eng = Engine(circuit=circ, num_primary=num_primary, num_local=num_local)
 eng.run()
 ```
+
+## GPU Simulation
 
 To use GPU for simulation and use host memory to store the entire statevector, try following configurations.
 
@@ -54,6 +74,9 @@ First you need to install `qiskit-aer-gpu`. Please refer to the [official docume
 ```Python
 eng = Engine(circuit=circ, num_primary=num_primary, num_local=num_local, sv_location="memory", device="GPU")
 ```
+
+
+## Backends
 
 You can specify a backend simulator by using `backend` option, currently only qiskit and pyquafu are supported.
 
@@ -73,6 +96,8 @@ quafu_circ.from_openqasm(dumps(circ))
 eng = Engine(circuit=quafu_circ, num_primary=num_primary, num_local=num_local, backend="quafu")
 eng.run()
 ```
+
+## Get Simulation Results
 
 We're working on to support measurement in qdao, currently please obtain state vector after simulation as follows.
 
@@ -104,17 +129,26 @@ There are some key features to be supported in the future
  - [x] GPU simulation
  - [ ] Noisy simulation
 
-# Issues
-
-Please file an issue or contact zyilun8@gmail.com if you encounter any problems.
-
 # Limitations
-Setting smaller memory requirement leads to larger performance overhead. This can be more severe when using qiskit backend as setting initial statevector in qiskit incurs additional data copy, this problem is avoided in [pyquafu](https://github.com/ScQ-Cloud/pyquafu), although pyquafu is slower than qiskit.
 
-For `qiskit < 1.0`, we have modified some source code of qiskit to avoid unnecessary logic that incurs performance issue. However, this fix is not yet finished for `qiskit >= 1.0`. Please expect slow performance using `qiskit >= 1.0` due to the performance overhead when setting initial state vector.
+## Performance Overhead with Qiskit Backend
+When using qiskit backend, setting initial statevector in qiskit incurs significant overhead due To
+1. Qiskit treats state vector as parameters and implements time-coonsuming validation logics
+2. There exists additional data copy when submitting circuit with initial state vector to Ae
 
-We are working on this [issue](https://github.com/Zhaoyilunnn/qdao/issues/14).
+, this problem is avoided in [pyquafu](https://github.com/ScQ-Cloud/pyquafu), although pyquafu is slower than qiskit. For `qiskit < 1.0`, we have modified some source code of qiskit to avoid unnecessary logic that incurs performance issue. However, this [issue](https://github.com/Zhaoyilunnn/qdao/issues/14) is not yet finished for `qiskit >= 1.0`. Please expect slow performance using `qiskit >= 1.0` due to the performance overhead when setting initial state vector. For now, it is strongly recommended to use `quafu` backend for better performance. Ultimately, we plan to implementa a customized C++ simulator as backend to avoid this issue.
 
-Ultimately, we plan to implementa a customized C++ simulator as backend to avoid this issue.
 
-For now, it is strongly recommended to use `quafu` backend for better performance.
+## Using Older Qiskit Version
+
+To alleviate the performance overhead with Qiskit, we have done some hack in qiskit source code
+
+```bash
+
+git checkout stable/0.1
+pip install .
+```
+
+
+# Issues
+Please file an issue or contact zyilun8@gmail.com if you encounter any problems.
