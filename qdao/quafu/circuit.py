@@ -72,19 +72,17 @@ class QuafuCircuitHelper(BaseCircWrapper):
 
         # 1. Get the set of qubits
         qset = set(range(num_local))
-
         # instrs: a series of gates
         # [XGate, XGate, CXGate, RYGate, RXGate, RZGate, CZGate]
-
         for instr in instrs:
             for q in self.get_instr_qubits(instr):
                 qset.add(q)
-
         # Fix qbit
         sub_circ = QuantumCircuit(num_primary)
         # Sorting []
         real_qubits = sorted(list(qset))
-
+        # print("len(real_qubits)=" + str(len(real_qubits)))
+        # print("num_primary=" + str(num_primary))
         assert len(real_qubits) <= num_primary
 
         qubit_map = {q: i for i, q in enumerate(real_qubits)}

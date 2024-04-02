@@ -1,11 +1,3 @@
-'''
-Author: fxfxfxfxfxfxfxfx 227935476@qq.com
-Date: 2024-03-29 09:56:50
-LastEditors: fxfxfxfxfxfxfxfx 227935476@qq.com
-LastEditTime: 2024-04-02 13:52:56
-FilePath: \qdao\examples\partitionor_test_randomcircuits.py
-Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
-'''
 from qiskit import transpile
 from qiskit.circuit.random import random_circuit
 from qiskit_aer import Aer
