@@ -2,7 +2,9 @@
 This module provides methods to partition original circuit
 into sub-circuits.
 """
+
 import logging
+import copy
 from typing import Any, List
 
 from qdao.qiskit.circuit import QiskitCircuitWrapper
@@ -72,7 +74,8 @@ class BaselinePartitioner(BasePartitioner):
             sub_circ = self._circ_helper.gen_sub_circ([instr], self._nl, self._np)
             sub_circs.append(sub_circ)
             logging.info("Find sub-circuit: {}, qubits: {}".format(sub_circ.circ, qset))
-
+        print("----------BaselinePartitioner-----------")
+        print("num of sub-circuits:" + str(len(sub_circs)))
         return sub_circs
 
 
@@ -109,7 +112,99 @@ class StaticPartitioner(BasePartitioner):
         if instrs:
             sub_circ = self._circ_helper.gen_sub_circ(instrs, self._nl, self._np)
             sub_circs.append(sub_circ)
+        print("----------StaticPartitioner-----------")
+        print("num of sub-circuits:" + str(len(sub_circs)))
+        return sub_circs
 
+
+class dptask:
+    """To assist the Uniq partitioning algorithm"""
+
+    def __init__(self, qubitNum: int, gateNum: int):
+        self.gateNum = gateNum
+        self.qubitNum = qubitNum
+
+    def addGate(self, gateIndex: int, gatePos):
+        if isinstance(gatePos, int):
+            gatePos = [gatePos]
+        for j in range(self.qubitNum):
+            self.result_bit[gateIndex + 1][j] += self.result_bit[gateIndex][j]
+            self.result_op[gateIndex + 1][j] += self.result_op[gateIndex][j]
+            if j in gatePos:
+                self.result_op[gateIndex + 1][j].append(gateIndex + 1)
+                if len(gatePos) == 2:
+                    a = [x for x in gatePos if x != j][0]
+                    self.result_bit[gateIndex + 1][j] += self.result_bit[gateIndex][a]
+                    self.result_bit[gateIndex + 1][j] = list(
+                        set(self.result_bit[gateIndex + 1][j])
+                    )
+                    self.result_op[gateIndex + 1][j] += self.result_op[gateIndex][a]
+                    self.result_op[gateIndex + 1][j] = list(
+                        set(self.result_op[gateIndex + 1][j])
+                    )
+
+    def createTask(self, ops):
+        self.result_bit = [
+            [[] for _ in range(self.qubitNum)] for _ in range(self.gateNum + 1)
+        ]
+        self.result_op = [
+            [[] for _ in range(self.qubitNum)] for _ in range(self.gateNum + 1)
+        ]
+        for i in range(self.qubitNum):
+            self.result_bit[0][i].append(i)
+        for i in range(self.gateNum):
+            self.addGate(i, ops[i].pos)
+
+    def selectSubCircuit(self, numSubcircuit: int) -> (list[int], int):
+        """Find sub-lines that meet the requirements from the array in
+        preprocessing. The return value is the number of bits representing
+        the sub-circuit. When a sub-circuit that fails to obtain enough
+        qubits is selected at one time, the return value can be used for
+        the next selection."""
+        numQubit = 0
+        numOp = 0
+        opList = []
+        bitList = []
+        for i in range(self.gateNum):
+            for j in range(self.qubitNum):
+                if (
+                    len(self.result_op[i + 1][j]) >= numOp
+                    and len(self.result_bit[i + 1][j]) <= numSubcircuit
+                ):
+                    opList = self.result_op[i + 1][j]
+                    bitList = self.result_bit[i + 1][j]
+                    numQubit = len(self.result_bit[i + 1][j])
+                    numOp = len(self.result_op[i + 1][j])
+        return (opList, numQubit)
+
+
+class UniQPartitioner(BasePartitioner):
+    """Partitioner in UniQ"""
+
+    def run(self, circuit: Any) -> List[QdaoCircuit]:
+        self._circ_helper.circ = circuit
+        ops = copy.deepcopy(self._circ_helper.instructions)
+        active = self._np
+        m = self._circ_helper.circ.num
+        sub_circs = []
+        while len(ops) != 0:
+            needQubit = active
+            instrs = []
+            while needQubit != 0 and len(ops) != 0:
+                task = dptask(m, len(ops))
+                task.createTask(ops)
+                opList, numQubit = task.selectSubCircuit(needQubit)
+                if numQubit == 0:
+                    break
+                needQubit -= numQubit
+                for i in range(len(ops), -1, -1):
+                    if i + 1 in opList:
+                        instrs.append(ops[i])
+                        ops.pop(i)
+            sub_circ = self._circ_helper.gen_sub_circ(instrs, self._nl, self._np)
+            sub_circs.append(sub_circ)
+        print("----------UniqPartitioner-----------")
+        print("num of sub-circuits:" + str(len(sub_circs)))
         return sub_circs
 
 
