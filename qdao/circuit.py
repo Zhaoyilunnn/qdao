@@ -197,7 +197,7 @@ class DependencyMatrix:
         for i in range(self.gate_num):
             self.preprocessing_single_quantum_circuits(i, ops[i].pos)
 
-    def select_subcircuit(self, active_qubit_num: int) -> (list[int], int):
+    def select_subcircuit(self, active_qubit_num: int) -> (List[int], int):
         """Find sub-lines that meet the requirements from the dependency matrix
 
         Given an active qubit, which is the maximum number of qubits in the desired
@@ -211,7 +211,7 @@ class DependencyMatrix:
 
         Return:
         list[int]:
-        int: 
+        int:
         """
         qubit_num_subcircuit = 0
         gate_num_subcircuit = 0
