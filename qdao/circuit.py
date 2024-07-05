@@ -4,7 +4,7 @@ into sub-circuits.
 """
 
 import logging
-from typing import Any, List
+from typing import Any, List, Tuple
 
 from qdao.qiskit.circuit import QiskitCircuitWrapper
 from qdao.quafu.circuit import QuafuCircuitHelper
@@ -78,13 +78,10 @@ class BaselinePartitioner(BasePartitioner):
 
 class StaticPartitioner(BasePartitioner):
     """Static partitioner which traverse the operations in original order"""
-
     def run(self, circuit: Any) -> List[QdaoCircuit]:
         # Set cicuit of circuit helper
         self._circ_helper.circ = circuit
-
         sub_circs = []
-
         instrs = []
         qset = set()
         for instr in self._circ_helper.instructions:
@@ -92,7 +89,6 @@ class StaticPartitioner(BasePartitioner):
             for q in self._circ_helper.get_instr_qubits(instr):
                 if q >= self._nl:
                     qs.add(q)
-
             if len(qset | qs) <= (self._np - self._nl):
                 qset = qset | qs
                 instrs.append(instr)
@@ -197,7 +193,7 @@ class DependencyMatrix:
         for i in range(self.gate_num):
             self.preprocessing_single_quantum_circuits(i, ops[i].pos)
 
-    def select_subcircuit(self, active_qubit_num: int) -> (List[int], int):
+    def select_subcircuit(self, active_qubit_num: int) -> Tuple[List[int], int]:
         """Find sub-lines that meet the requirements from the dependency matrix
 
         Given an active qubit, which is the maximum number of qubits in the desired
@@ -210,8 +206,8 @@ class DependencyMatrix:
         active_qubit_num: An integer representing the required number of active qubits
 
         Return:
-        list[int]:
-        int:
+        list[int]: Quantum gate index belonging to sub-circuit
+        int: The number of qubits that the subarray acts on
         """
         qubit_num_subcircuit = 0
         gate_num_subcircuit = 0

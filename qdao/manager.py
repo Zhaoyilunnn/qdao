@@ -4,7 +4,8 @@ import multiprocessing as mp
 import os
 from threading import Thread
 from typing import List
-
+from mpi4py import MPI
+import logging
 import numpy as np
 
 from qdao.executor import (
@@ -13,6 +14,12 @@ from qdao.executor import (
     ConstantPoolParallelExecutor,
     ParallelExecutor,
     PoolParallelExecutor,
+)
+from qdao.circuit import (
+    BasePartitioner,
+    CircuitHelperProvider,
+    QdaoCircuit,
+    StaticPartitioner,
 )
 from qdao.util import *
 
@@ -39,11 +46,14 @@ class SvManager:
                 Note that this defines the size of minimum storage unit.
         """
         self._nq, self._np, self._nl = num_qubits, num_primary, num_local
+        print("qubit")
         self._chunk_idx = 0
         self._chunk = np.zeros(1 << num_primary, dtype=np.complex128)
         self._is_parallel = is_parallel
         self._executor = BatchParallelExecutor()
-
+        comm = MPI.COMM_WORLD
+        self._rank = comm.Get_rank()
+        self.previous_subcircuit_qset: list = []
         # Save statevector in memory
         self._global_sv = []
 
@@ -162,15 +172,7 @@ class SvManager:
 
                 fn = generate_secondary_file_name(inds[idx])
                 load_single_su_params.append((isub, fn))
-                # self._load_single_su(isub, fn)
-
-        # with mp.Pool(mp.cpu_count()) as pool:
-        #    pool.starmap(self._load_single_su, load_single_su_params)
-        #    pool.close()
-        #    pool.join()
         if self._is_parallel:
-            # executor = ParallelExecutor(self._load_single_su, load_single_su_params)
-            # executor.execute()
             self._executor.execute(self._load_single_su, load_single_su_params)
         else:
             for isub, fn in load_single_su_params:
@@ -197,15 +199,12 @@ class SvManager:
             raise ValueError(
                 "Number of qubits in a sub-circuit should be larger than local qubits"
             )
-
         global_qubits = self._get_global_qubits(org_qubits)
         LGDIM = len(global_qubits)  # Logical global qubits' size
         isub = 0
         num_prim_grps = self._num_primary_groups(LGDIM)
-
         start_group_id = self._get_start_group_id(num_prim_grps, self._chunk_idx)
         end_group_id = start_group_id + num_prim_grps
-
         store_single_su_params = []
         for gid in range(start_group_id, end_group_id):
             inds = indexes(global_qubits, gid)
@@ -228,66 +227,103 @@ class SvManager:
             for isub, fn in store_single_su_params:
                 self._store_single_su(isub, fn)
 
-    # @time_it
-    # def store_sv(self, org_qubits: List[int]):
-    #    if len(org_qubits) <= self._nl:
-    #        raise ValueError("Number of qubits in a sub-circuit should be larger than local qubits")
+    @time_it
+    def is_initial_state(self):
+        return len(self.previous_subcircuit_qset) == 0
 
-    #    global_qubits = self._get_global_qubits(org_qubits)
-    #    LGDIM = len(global_qubits) # Logical global qubits' size
-    #    isub = 0
-    #    num_prim_grps = self._num_primary_groups(LGDIM)
+    # todo error
+    @time_it
+    def distributed_send_status_vector(self, sub_circ: QdaoCircuit):
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+        size = comm.Get_size()
+        
+        all_src = get_dest(
+            self._nq, sub_circ.real_qubits, self.previous_subcircuit_qset, rank
+        )
+        all_dest = get_dest(
+            self._nq, self.previous_subcircuit_qset, sub_circ.real_qubits, rank
+        )
+        logging.debug("The qubit acted on by the previous subcircuit")
+        logging.debug(self.previous_subcircuit_qset)
+        logging.debug("The qubit that the current subcircuit acts on")
+        logging.debug(sub_circ.real_qubits)
+        pack_size = 1 << get_pack_size(
+            sub_circ.real_qubits, self.previous_subcircuit_qset
+        )
+        all_tag = get_tag(all_dest)
+        buffer = []
+        for i in range(len(all_dest)):
+            if all_dest[i] != rank:
+                logging.debug(
+                    "Process {} sends its own status [{},{}] to process {}".format(
+                        rank, i * pack_size, (i + 1) * pack_size, all_dest[i]
+                    )
+                )
+                logging.debug(
+                    "The size of a single packet is {} bytes".format(
+                        self._chunk[i * pack_size : (i + 1) * pack_size].nbytes
+                    )
+                )
+                comm.Isend(
+                    self._chunk[i * pack_size : (i + 1) * pack_size],
+                    dest=all_dest[i],
+                    tag=all_tag[i],
+                )
+            else:
+                logging.debug(
+                    "Process {} sends its own status [{},{}] to process {}".format(
+                        rank, i * pack_size, (i + 1) * pack_size, all_dest[i]
+                    )
+                )
+                logging.debug(
+                    "Process {} receives its own status [{},{}] from process {}".format(
+                        rank, i * pack_size, (i + 1) * pack_size, all_src[i]
+                    )
+                )
+                buffer.append(self._chunk[i * pack_size : (i + 1) * pack_size])
+        for i in range(len(all_src)):
+            if all_src[i] == rank:
+                self._chunk[i * pack_size : (i + 1) * pack_size] = buffer.pop(0)
 
-    #    start_group_id = self._get_start_group_id(num_prim_grps, self._chunk_idx)
-    #    end_group_id = start_group_id + num_prim_grps
+    @time_it
+    def distributed_receive_status_vector(self, sub_circ: QdaoCircuit):
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+        size = comm.Get_size()
+        all_src = get_dest(
+            self.num_qubits, sub_circ.real_qubits, self.previous_subcircuit_qset, rank
+        )
+        all_req = []
+        pack_size = 1 << get_pack_size(
+            sub_circ.real_qubits, self.previous_subcircuit_qset
+        )
 
-    #    def save_to_file(gid, inds, idx):
-    #        isub = (1<<LGDIM) * (gid-start_group_id) + idx
-    #        fn = generate_secondary_file_name(inds[idx])
-    #        # Save corresponding slice to secondary storage
-    #        chk_start = isub<<self._nl
-    #        chk_end = (isub<<self._nl) + (1<<self._nl)
-    #        np.save(fn, self._chunk[chk_start: chk_end])
-
-    #        logging.debug("Saving sub chunk: {}, "\
-    #                "for group: {}, "\
-    #                "inds: {}, "\
-    #                "fn: {}, \n"\
-    #                "chk_start: {}, "\
-    #                "chk_end: {}, "\
-    #                "chunk: {}, "\
-    #                "chunk_size: {}"\
-    #                .format(
-    #                    isub,
-    #                    gid,
-    #                    inds,
-    #                    fn,
-    #                    chk_start,
-    #                    chk_end,
-    #                    self._chunk,
-    #                    self._chunk.shape[0]
-    #                ))
-
-    #    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-    #        futures = []
-    #        for gid in range(start_group_id, end_group_id):
-    #            inds = indexes(global_qubits, gid)
-    #            logging.debug("Indexing for group: {}, "\
-    #                    "indexes: {}, "\
-    #                    "org_qubits: {}, "\
-    #                    "global_qubits: {}"\
-    #                    .format(
-    #                        gid,
-    #                        inds,
-    #                        org_qubits,
-    #                        global_qubits
-    #                    ))
-    #            for idx in range(1<<LGDIM):
-    #                futures.append(executor.submit(save_to_file, gid, inds, idx))
-
-    #        # wait for all threads to complete
-    #        for future in concurrent.futures.as_completed(futures):
-    #            pass
+        all_tag = get_tag(all_src)
+        for i in range(len(all_src)):
+            if all_src[i] != rank:
+                logging.debug(
+                    "Process {} receives its own status [{},{}] from process {}".format(
+                        rank, i * pack_size, (i + 1) * pack_size, all_src[i]
+                    )
+                )
+                logging.debug(
+                    "The size of a single packet is {} bytes".format(
+                        self._chunk[i * pack_size : (i + 1) * pack_size].nbytes
+                    )
+                )
+                all_req.append(
+                    comm.Irecv(
+                        self._chunk[i * pack_size : (i + 1) * pack_size],
+                        source=all_src[i],
+                        tag=all_tag[i],
+                    )
+                )
+        for req in all_req:
+            req.Wait()
+        logging.debug("All data of process {} is ready".format(rank))
+        self.previous_subcircuit_qset = sub_circ.real_qubits
+        # breakpoint()
 
 
 SvManager.print_statistics = print_statistics

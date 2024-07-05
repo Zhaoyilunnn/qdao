@@ -1,3 +1,5 @@
+from collections import Counter
+
 BITS = [
     1,
     2,
@@ -278,3 +280,55 @@ def safe_import(module_name, submodule_name):
             return func
 
         return placeholder_decorator
+
+
+def is_power_of_two(n: int):
+    if n <= 0:
+        return False
+    return (n & (n - 1)) == 0
+
+
+def get_pack_size(pre_qset: list[int], post_qset: list[int]) -> int:
+    num = 0
+    for i in range(len(pre_qset)):
+        if pre_qset[i] == post_qset[i]:
+            num += 1
+        else:
+            break
+    return num
+
+
+def get_dest(
+    num_qubit: int, pre_qset: list[int], post_qset: list[int], rank: int
+) -> list[int]:
+    all_qubits = set(range((num_qubit)))
+    global_qubit = list(all_qubits - set(post_qset))
+    original_index = indexes(pre_qset, rank)
+    ret = [0 for i in range(len(original_index))]
+    for i in range(len(original_index)):
+        for j in range(len(global_qubit)):
+            ret[i] += (
+                (original_index[i] & BITS[global_qubit[j]]) >> global_qubit[j]
+            ) << j
+    pack_size = get_pack_size(pre_qset, post_qset)
+    ret = [ret[i * (1 << pack_size)] for i in range(1 << (len(pre_qset) - pack_size))]
+    # print(ret)
+    # print("end get_dest")
+    return ret
+
+
+def get_tag(dest):
+    b = []
+    counter = {}
+    for num in dest:
+        if num in counter:
+            counter[num] += 1
+        else:
+            counter[num] = 0
+        b.append(counter[num])
+    return b
+
+
+if __name__ == "__main__":
+    print(get_dest(6, [0, 1, 2, 5], [0, 1, 2, 3], 0))
+    print(get_pack_size([0, 1, 2, 5], [0, 1, 2, 3]))

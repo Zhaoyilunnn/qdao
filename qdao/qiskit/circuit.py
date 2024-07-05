@@ -53,7 +53,6 @@ class QiskitCircuitWrapper(BaseCircWrapper):
 
         if not isinstance(self._circ, QuantumCircuit):
             raise ValueError("Please set circ before initializing from sv!")
-
         nq = self._circ.num_qubits
         circ = QuantumCircuit(nq)
         # FIXME: To test the performance of qiskit, do not initialize

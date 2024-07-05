@@ -1,7 +1,7 @@
 import logging
 from time import time
 from typing import Any, Optional
-
+from mpi4py import MPI
 import numpy as np
 
 from qdao.circuit import (
@@ -10,6 +10,7 @@ from qdao.circuit import (
     QdaoCircuit,
     StaticPartitioner,
 )
+from qiskit import QuantumCircuit
 from qdao.manager import SvManager
 from qdao.simulator import SimulatorProvider
 from qdao.util import generate_secondary_file_name, safe_import
@@ -83,7 +84,7 @@ class Engine:
         self._manager.chunk_idx = ichunk
         sv = self._manager.load_sv(sub_circ.real_qubits)
         logging.debug("loaded sv: {}".format(sv))
-
+        # todo
         self._circ_helper.circ = sub_circ.circ
         return self._circ_helper.init_circ_from_sv(sv)
 
@@ -103,7 +104,6 @@ class Engine:
     @time_it
     def _run(self, sub_circ: QdaoCircuit) -> None:
         """Run single sub-circuit
-
         Args:
             sub_circ (VirtualCircuit): Sub circuit with
                 metadata recording the mapping between
@@ -116,31 +116,6 @@ class Engine:
             assert sv.shape[0] == (1 << self._np)
             logging.info("Partial simulation consumes time: {}".format(time() - st))
             self._postprocess(sub_circ, ichunk, sv)
-
-    # def debug(self, sub_circ: QdaoCircuit):
-    #    """
-    #    After running a sub-circuit,
-    #    test the result statevector is correct
-    #    """
-    #    NQ = self._circ.num_qubits
-    #    circ = QuantumCircuit(NQ)
-    #    qubit_map = {
-    #        sub_circ.circ.qubits[i]: circ.qubits[q]
-    #        for i, q in enumerate(sub_circ.real_qubits)
-    #    }
-    #    for instr in sub_circ.circ.data[:-1]: # Omit last save_state
-    #        op = instr.operation.copy()
-    #        qubits = [qubit_map[i] for i in instr.qubits]
-    #        new_instr = CircuitInstruction(op, qubits=qubits)
-    #        circ.append(new_instr)
-    #    circ.save_state()
-
-    #    print(circ)
-    #    sv = self._sim.run(circ).result().get_statevector(-1)
-    #    sv_res = Statevector(retrieve_sv(NQ, self._nl))
-    #    print(sv)
-    #    print(sv_res)
-    #    assert sv.equiv(sv_res)
 
     @time_it
     def _initialize(self):
@@ -156,12 +131,64 @@ class Engine:
            simulations. Each simulation will init from a
            different part of statevector
         """
+        # sub_circs = self._part.run(self._circ)
+        # logging.info("Number of sub-circuits: {}".format(len(sub_circs)))
+        # self._initialize()
+        # for sub_circ in sub_circs:
+        #     self._run(sub_circ)
+        #     # self.debug(sub_circ)
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+        size = comm.Get_size()
         sub_circs = self._part.run(self._circ)
         logging.info("Number of sub-circuits: {}".format(len(sub_circs)))
-        self._initialize()
-        for sub_circ in sub_circs:
-            self._run(sub_circ)
-            # self.debug(sub_circ)
+        print("Number of sub-circuits: {}".format(len(sub_circs)))
+        for index, sub_circ in enumerate(sub_circs):
+            print("Start executing the {}-th subcirc".format(index))
+            logging.debug(
+                "Rank {} start executing the {}-th subcirc".format(rank, index)
+            )
+            # breakpoint()
+            sv = self._distributed_prepare_state(sub_circ)
+            self._distributed_run(sv)
+        self._gather_state_vectors()
+
+    @time_it
+    def _distributed_prepare_state(self, subcirc: QdaoCircuit) -> None:
+        # todo
+        # 将当前节点的状态向量从上一个子线路的状态转化成当前
+        # 子线路的状态，如果上一个状态是初始状态，则不需要太
+        # 多操作，如果上一个状态是子线路则通过通信将其初始化
+        self._circ_helper.circ = subcirc.circ
+        if self._manager.is_initial_state():
+            self._manager.previous_subcircuit_qset = subcirc.real_qubits
+        if not self._manager.is_initial_state():
+            self._manager.distributed_send_status_vector(subcirc)
+            self._manager.distributed_receive_status_vector(subcirc)
+        return self._circ_helper.init_circ_from_sv(self._manager._chunk)
+
+    @time_it
+    def _distributed_run(self, sub_circ: QdaoCircuit) -> None:
+        """Distributed execution of quantum circuits
+        Args:
+            sub_circ (VirtualCircuit): Multiple subcircuit with
+                metadata recording the mapping between
+                virtual and real qubits
+        """
+        sv = self._sim.run(sub_circ)
+        self._manager._chunk = sv
+        # TODO
+        # 将当前节点初始化的状态向量进行子线路中的运算
+
+    @time_it
+    def _gather_state_vectors(self) -> None:
+        comm = MPI.COMM_WORLD
+        rank = comm.Get_rank()
+        size = comm.Get_size()
+        print("rank" + str(rank))
+
+        print("rank" + str(rank))
+        print(self._manager._chunk)
 
 
 Engine.print_statistics = print_statistics
