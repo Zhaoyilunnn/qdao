@@ -10,7 +10,50 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-"""Unitary gate."""
+"""
+Unitary Gate Module
+====================
+
+This module provides a `Gate` class to represent unitary gates in quantum circuits.
+It includes methods for matrix conversion, exponentiation, control, and argument broadcasting.
+
+Modules:
+--------
+- qiskit.circuit.exceptions: Contains exceptions related to quantum circuits.
+- qiskit.circuit.parameterexpression: Handles parameter expressions in quantum circuits.
+- .annotated_operation: Provides classes for annotated operations.
+- .instruction: Defines the base `Instruction` class.
+
+Classes:
+--------
+- Gate: Represents a unitary gate in a quantum circuit.
+
+Methods:
+--------
+- __init__(self, name: str, num_qubits: int, params: list, label: str | None = None, duration: Any = None, unit: str = "dt")
+    Create a new gate.
+- to_matrix(self) -> np.ndarray
+    Return a Numpy.array for the gate unitary matrix.
+- power(self, exponent: float)
+    Creates a unitary gate as `gate^exponent`.
+- __pow__(self, exponent: float) -> "Gate"
+    Allows exponentiation using the `**` operator.
+- _return_repeat(self, exponent: float) -> "Gate"
+    Returns a repeated version of the gate.
+- control(self, num_ctrl_qubits: int = 1, label: str | None = None, ctrl_state: int | str | None = None, annotated: bool = False)
+    Return the controlled version of itself.
+- _broadcast_single_argument(qarg: list) -> Iterator[tuple[list, list]]
+    Expands a single argument for broadcasting.
+- _broadcast_2_arguments(qarg0: list, qarg1: list) -> Iterator[tuple[list, list]]
+    Expands two arguments for broadcasting.
+- _broadcast_3_or_more_args(qargs: list) -> Iterator[tuple[list, list]]
+    Expands three or more arguments for broadcasting.
+- broadcast_arguments(self, qargs: list, cargs: list) -> Iterable[tuple[list, list]]
+    Validation and handling of the arguments and their relationships.
+- validate_parameter(self, parameter: Any)
+    Gate parameters should be int, float, or ParameterExpression.
+
+"""
 
 from __future__ import annotations
 
@@ -39,10 +82,12 @@ class Gate(Instruction):
         """Create a new gate.
 
         Args:
-            name: The Qobj name of the gate.
-            num_qubits: The number of qubits the gate acts on.
-            params: A list of parameters.
-            label: An optional label for the gate.
+            name (str): The Qobj name of the gate.
+            num_qubits (int): The number of qubits the gate acts on.
+            params (list): A list of parameters.
+            label (str | None): An optional label for the gate.
+            duration (Any): The duration of the gate.
+            unit (str): The unit of the gate duration.
         """
         self.definition = None
         super().__init__(
@@ -109,13 +154,13 @@ class Gate(Instruction):
         Implemented either as a controlled gate (ref. :class:`.ControlledGate`)
         or as an annotated operation (ref. :class:`.AnnotatedOperation`).
 
-        Args:
-            num_ctrl_qubits: number of controls to add to gate (default: ``1``)
-            label: optional gate label. Ignored if implemented as an annotated
+         Args:
+            num_ctrl_qubits (int): number of controls to add to gate (default: ``1``)
+            label (str | None): optional gate label. Ignored if implemented as an annotated
                 operation.
-            ctrl_state: the control state in decimal or as a bitstring
+            ctrl_state (int | str | None): the control state in decimal or as a bitstring
                 (e.g. ``'111'``). If ``None``, use ``2**num_ctrl_qubits-1``.
-            annotated: indicates whether the controlled gate can be implemented
+            annotated (bool): indicates whether the controlled gate can be implemented
                 as an annotated gate.
 
         Returns:
@@ -139,7 +184,13 @@ class Gate(Instruction):
     @staticmethod
     def _broadcast_single_argument(qarg: list) -> Iterator[tuple[list, list]]:
         """Expands a single argument.
-
+        
+        Args:
+           qarg (list): List of qubit arguments.
+        
+        Returns:
+            Iterator[tuple[list, list]]: Iterator of expanded arguments.   
+           
         For example: [q[0], q[1]] -> [q[0]], [q[1]]
         """
         # [q[0], q[1]] -> [q[0]]
@@ -149,6 +200,18 @@ class Gate(Instruction):
 
     @staticmethod
     def _broadcast_2_arguments(qarg0: list, qarg1: list) -> Iterator[tuple[list, list]]:
+        """Expands two arguments for broadcasting.
+
+        Args:
+            qarg0 (list): First list of qubit arguments.
+            qarg1 (list): Second list of qubit arguments.
+        
+        Returns:
+            Iterator[tuple[list, list]]: Iterator of expanded arguments.    
+
+        Raises:
+            CircuitError: If the arguments cannot be combined.
+        """
         if len(qarg0) == len(qarg1):
             # [[q[0], q[1]], [r[0], r[1]]] -> [q[0], r[0]]
             #                              -> [q[1], r[1]]
@@ -171,6 +234,18 @@ class Gate(Instruction):
 
     @staticmethod
     def _broadcast_3_or_more_args(qargs: list) -> Iterator[tuple[list, list]]:
+        """Expands three or more arguments for broadcasting.
+
+        Args:
+            qargs (list): List of lists of qubit arguments.
+        
+        Returns:
+            Iterator[tuple[list, list]]: Iterator of expanded arguments.    
+            
+        Raises:
+            CircuitError: If the arguments cannot be combined.    
+        """    
+
         if all(len(qarg) == len(qargs[0]) for qarg in qargs):
             for arg in zip(*qargs):
                 yield list(arg), []
@@ -208,15 +283,16 @@ class Gate(Instruction):
                 [q[0], q[1]], [r[0], r[1]],  ...] -> [q[0], r[0], ...], [q[1], r[1], ...]
 
         Args:
-            qargs: List of quantum bit arguments.
-            cargs: List of classical bit arguments.
+            qargs (list): List of quantum bit arguments.
+            cargs (list): List of classical bit arguments.
 
         Returns:
-            A tuple with single arguments.
+            Iterable[tuple[list, list]]: A tuple with single arguments.
 
         Raises:
             CircuitError: If the input is not valid. For example, the number of
                 arguments does not match the gate expectation.
+        
         """
         if len(qargs) != self.num_qubits or cargs:
             raise CircuitError(
@@ -241,7 +317,14 @@ class Gate(Instruction):
             raise CircuitError("This gate cannot handle %i arguments" % len(qargs))
 
     def validate_parameter(self, parameter):
-        """Gate parameters should be int, float, or ParameterExpression"""
+        """Gate parameters should be int, float, or ParameterExpression
+
+        Args:
+            parameter (Any): Parameter to validate.
+
+        Raises:
+            CircuitError: If the parameter is invalid.
+        """
         if isinstance(parameter, ParameterExpression):
             if len(parameter.parameters) > 0:
                 return (

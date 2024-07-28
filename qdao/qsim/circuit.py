@@ -1,3 +1,30 @@
+"""
+Qsim Circuit Helper Module
+==========================
+
+This module provides the `QsimCircuitHelper` class, which is used to manage and manipulate
+quantum circuits specific to the Qsim framework. The helper class facilitates various
+operations such as initializing circuits from state vectors, generating sub-circuits, and
+retrieving instructions and qubit mappings.
+
+Modules:
+--------
+
+- qdao.circuit: Contains the QdaoCircuit class for representing quantum circuits.
+- cirq.circuits: Contains the Circuit class for representing quantum circuits in Cirq.
+- cirq.ops.gate_operation: Contains the GateOperation class for representing gate operations.
+
+Classes:
+--------
+
+- QsimCircuitHelper: Helper class for managing Qsim quantum circuits.
+
+Attributes:
+-----------
+
+- Circuit: The main class for representing a quantum circuit in Cirq.
+- GateOperation: The class for representing gate operations in Cirq.
+"""
 import copy
 import logging
 from typing import List, Optional
@@ -26,7 +53,31 @@ from cirq.ops.gate_operation import GateOperation
 
 
 class QsimCircuitHelper:
+    """
+    Helper class for managing and manipulating Qsim quantum circuits.
+
+    This class provides methods for initializing circuits from state vectors, generating
+    sub-circuits based on a list of instructions, and retrieving instructions and qubit
+    mappings from a given circuit.
+
+    Attributes:
+        _circ (Circuit): The quantum circuit object.
+
+    Methods:
+        circ: Returns or sets the quantum circuit object.
+        num_qubits: Returns the number of qubits in the circuit.
+        instructions: Returns the list of instructions in the circuit.
+        get_instr_qubits: Returns the qubits involved in a given instruction.
+        init_circ_from_sv: Initializes a circuit from a given state vector.
+        gen_sub_circ: Generates a sub-circuit based on a list of instructions.
+    """
     def __init__(self, circ: Optional[Circuit] = None) -> None:
+        """
+        Initializes the QsimCircuitHelper with an optional quantum circuit.
+
+        Args:
+            circ (Circuit, optional): The quantum circuit object.
+        """
         self._circ = circ or None
         self._circ.num = 0
         self._circ.itrs = []

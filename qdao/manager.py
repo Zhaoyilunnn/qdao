@@ -1,3 +1,36 @@
+"""
+Statevector Manager Module
+==========================
+
+This module provides an `SvManager` class to manage the statevector data access
+and storage for quantum circuit simulations. The statevectors can be stored in 
+memory or on disk, and the class supports both serial and parallel execution 
+for initializing, loading, and storing statevector chunks.
+
+Modules:
+--------
+
+- concurrent.futures: Provides a high-level interface for asynchronously executing callables.
+- logging: Provides a flexible framework for emitting log messages from Python programs.
+- multiprocessing: Supports spawning processes using an API similar to the threading module.
+- os: Provides a portable way of using operating system dependent functionality.
+- threading: Constructs higher-level threading interfaces.
+- typing: Provides runtime support for type hints.
+- numpy: Provides support for large, multi-dimensional arrays and matrices.
+- qdao.executor: Contains executor classes for parallel execution.
+- qdao.util: Provides utility functions for safe import and file name generation.
+
+Classes:
+--------
+
+- SvManager: Manages statevector storage and retrieval.
+
+Attributes:
+-----------
+
+- print_statistics: A function to print execution statistics.
+- time_it: A decorator to measure the execution time of methods.
+"""
 import concurrent.futures
 import logging
 import multiprocessing as mp
@@ -21,7 +54,24 @@ time_it = safe_import("qutils", "time_it")
 
 
 class SvManager:
-    """Statevector data access manager"""
+    """
+    Statevector data access manager.
+
+    This class handles the initialization, loading, and storing of statevector chunks
+    for quantum circuit simulations. Statevectors can be stored in memory or on disk,
+    and the operations can be performed either serially or in parallel.
+
+    Attributes:
+        _nq (int): Number of qubits in the target circuit.
+        _np (int): Number of qubits in primary storage (host memory).
+        _nl (int): Number of qubits in secondary storage (disk).
+        _chunk_idx (int): Index of the current chunk.
+        _chunk (np.ndarray): Current chunk of the statevector.
+        _is_parallel (bool): Indicates if operations should be parallelized.
+        _executor (BatchParallelExecutor): Executor for parallel operations.
+        _global_sv (List[np.ndarray]): List of statevector chunks in memory.
+        _sv_location (str): Location of statevector storage ('memory' or 'disk').
+    """
 
     def __init__(
         self,
@@ -32,11 +82,14 @@ class SvManager:
         sv_location="disk",
     ) -> None:
         """
+        Initializes the SvManager with the specified parameters.
+
         Args:
-            num_qubits (int): Number of qubits in the target circuit
-            num_primary (int): Number of qubits that reside in primary storage (i.e., host memory)
-            num_local (int): Number of qubits that reside in secondary storage (i.e., disk).
-                Note that this defines the size of minimum storage unit.
+            num_qubits (int): Number of qubits in the target circuit.
+            num_primary (int): Number of qubits in primary storage.
+            num_local (int): Number of qubits in secondary storage.
+            is_parallel (bool): Indicates if operations should be parallelized.
+            sv_location (str): Location of statevector storage ('memory' or 'disk').
         """
         self._nq, self._np, self._nl = num_qubits, num_primary, num_local
         self._chunk_idx = 0
