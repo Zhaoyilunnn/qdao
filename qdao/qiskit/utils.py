@@ -10,7 +10,23 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-"""Utility functions for generating random circuits."""
+"""
+Utility Functions for Generating Random Circuits
+=================================================
+
+This module provides utility functions for generating random quantum circuits.
+
+Modules:
+--------
+- numpy: Handles numerical operations and arrays.
+- qiskit.circuit: Provides the QuantumCircuit, QuantumRegister, ClassicalRegister, and exceptions for quantum circuits.
+- qiskit.circuit.library.standard_gates: Contains standard gates for quantum circuits.
+
+Functions:
+----------
+- random_circuit(num_qubits: int, depth: int, max_operands: int = 3, measure: bool = False, conditional: bool = False, reset: bool = False, seed: int = None) -> QuantumCircuit
+    Generate a random quantum circuit with the specified parameters.
+"""
 
 import numpy as np
 from qiskit.circuit import ClassicalRegister, QuantumCircuit, QuantumRegister, Reset
@@ -66,20 +82,20 @@ def random_circuit(
         circ = random_circuit(2, 2, measure=True)
         circ.draw(output='mpl')
 
-    Args:
-        num_qubits (int): number of quantum wires
-        depth (int): layers of operations (i.e. critical path length)
-        max_operands (int): maximum operands of each gate (between 1 and 3)
-        measure (bool): if True, measure all qubits at the end
-        conditional (bool): if True, insert middle measurements and conditionals
-        reset (bool): if True, insert middle resets
-        seed (int): sets random seed (optional)
+     Args:
+        num_qubits (int): Number of quantum wires.
+        depth (int): Layers of operations (i.e. critical path length).
+        max_operands (int): Maximum operands of each gate (between 1 and 3). Defaults to 3.
+        measure (bool): If True, measure all qubits at the end. Defaults to False.
+        conditional (bool): If True, insert middle measurements and conditionals. Defaults to False.
+        reset (bool): If True, insert middle resets. Defaults to False.
+        seed (int): Sets random seed (optional). Defaults to None.
 
     Returns:
-        QuantumCircuit: constructed circuit
+        QuantumCircuit: Constructed random quantum circuit.
 
     Raises:
-        CircuitError: when invalid options given
+        CircuitError: When invalid options are given.
     """
     if max_operands < 1 or max_operands > 3:
         raise CircuitError("max_operands must be between 1 and 3")

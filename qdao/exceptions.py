@@ -1,5 +1,12 @@
-""" Exception for errors raised by QVM """
+"""
+Exceptions Module
+====================
 
+This module defines exceptions for errors raised by the Quantum Virtual Machine (QVM).
+
+Classes:
+    QdaoError: Base class for errors raised by QVM.
+"""
 
 class QdaoError(Exception):
     """Base class for errors raised by QVM"""

@@ -11,6 +11,14 @@ from qdao.base_circuit_wrapper import BaseCircWrapper
 
 
 class QiskitCircuitWrapper(BaseCircWrapper):
+    """
+    Wrapper class for Qiskit QuantumCircuit.
+
+    Provides additional functionalities and interface for interaction with QDAO.
+
+    Args:
+        circ (Optional[QuantumCircuit]): Qiskit QuantumCircuit instance.
+    """
     def __init__(self, circ: Optional[QuantumCircuit] = None) -> None:
         self._circ = circ or None
 
@@ -40,6 +48,9 @@ class QiskitCircuitWrapper(BaseCircWrapper):
 
     def init_circ_from_sv(self, sv: np.ndarray):
         """Initialize qiskit QuantumCircuit from given statevector
+        
+        Args:
+            sv (np.ndarray): Statevector to initialize the circuit with.
 
         Comments:
             1. Currently qiskit QuantumCircuit.initialize will
@@ -69,9 +80,12 @@ class QiskitCircuitWrapper(BaseCircWrapper):
         instructions
 
         Args:
-            instrs (List[CircuitInstruction]): A list of instructions
-        Return:
-            QdaoCircuit
+            instrs (List[CircuitInstruction]): A list of instructions.
+            num_local (int): Number of local qubits.
+            num_primary (int): Number of primary qubits.
+
+        Returns:
+            QdaoCircuit: Generated sub-circuit.
         """
         if not isinstance(self._circ, QuantumCircuit):
             raise ValueError("Please set self._circ")
