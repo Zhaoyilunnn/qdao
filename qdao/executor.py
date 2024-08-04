@@ -108,7 +108,7 @@ class ConstantPoolParallelExecutor:
     """
     Executes a function in parallel using a constant-sized thread pool.
 
-    When the number of qubits (NQ) is much larger than the number of layers (NL), 
+    When the number of qubits (NQ) is much larger than the number of local qubits (NL), 
     there will be excessive overhead. This class tries to run a thread pool group 
     by group with each group of CPU_COUNT size.
     """
@@ -154,7 +154,7 @@ class AsyncIoExecutor:
     """
     Executes a function in parallel using asyncio for asynchronous I/O operations.
 
-    When the number of qubits (NQ) is much larger than the number of layers (NL), 
+    When the number of qubits (NQ) is much larger than the number of local qubits (NL), 
     there will be excessive overhead. This class tries to run thread pool group 
     by group with each group of CPU_COUNT size.
     """

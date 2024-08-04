@@ -11,10 +11,7 @@
 # that they have been altered from the originals.
 
 """
-Qiskit Instruction Module
-==========================
-
-This module contains the definition and functionality of a generic quantum instruction.
+A generic quantum instruction.
 
 Instructions can be implementable on hardware (u, cx, etc.) or in simulation
 (snapshot, noise, etc.).

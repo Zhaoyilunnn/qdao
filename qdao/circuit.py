@@ -56,8 +56,8 @@ class BasePartitioner:
     Base class for circuit partitioning.
 
     Attributes:
-        np (int): Number of partitions.
-        nl (int): Number of layers.
+        np (int): Number of primary qubits.
+        nl (int): Number of local qubits.
         backend (str): The backend used for the partitioning process.
     """
 
@@ -68,22 +68,22 @@ class BasePartitioner:
 
     @property
     def np(self):
-        """Gets the number of partitions."""
+        """Gets the number of primary qubits."""
         return self._np
 
     @np.setter
     def np(self, n):
-        """Sets the number of partitions."""
+        """Sets the number of primary qubits."""
         self._np = n
 
     @property
     def nl(self):
-        """Sets the number of layers."""
+        """Sets the number of local qubits."""
         return self._nl
 
     @nl.setter
     def nl(self, n):
-        """Sets the number of layers."""
+        """Sets the number of local qubits."""
         self._nl = n
 
     def run(self, circuit: Any) -> List[QdaoCircuit]:

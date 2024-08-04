@@ -35,10 +35,6 @@ class QdaoSimObj:
     This class encapsulates the quantum circuit and any additional options required
     to run the simulation.
 
-    Attributes:
-        _objs (tuple): Tuple containing the simulation objects.
-        _circ (Any): The quantum circuit object.
-        _run_options (dict): Options for running the simulation.
     """
 
     def __init__(self, *objs, **options) -> None:
@@ -82,8 +78,6 @@ class SimulatorProvider:
     Methods:
         get_simulator: Returns an instance of the specified simulator backend.
 
-    Attributes:
-        SIMS (dict): Dictionary mapping backend names to simulator classes.
     """
 
     @classmethod

@@ -10,30 +10,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-"""
-Annotated Operations
-====================
-
-This module defines the `AnnotatedOperation` class and various modifier classes
-used to create annotated operations in Qiskit. Annotated operations allow the
-addition of modifiers to base operations, enabling more abstract representations
-and optimizations during transpilation.
-
-Classes:
---------
-
-- Modifier: Base class for all modifiers.
-- InverseModifier: Modifier to specify that the operation is inverted.
-- ControlModifier: Modifier to specify that the operation is controlled.
-- PowerModifier: Modifier to specify that the operation is raised to a power.
-- AnnotatedOperation: Class representing an annotated operation.
-
-Functions:
-----------
-
-- _canonicalize_modifiers: Returns the canonical representative of the modifier list.
-
-"""
+"""Annotated Operations."""
 
 from __future__ import annotations
 
@@ -107,8 +84,8 @@ class AnnotatedOperation(Operation):
         that is immediately followed by its inverse.
 
         Args:
-            base_op (Operation): base operation being modified
-            modifiers (Union[Modifier, List[Modifier]]): ordered list of modifiers. Supported modifiers include
+            base_op: base operation being modified
+            modifiers: ordered list of modifiers. Supported modifiers include
                 ``InverseModifier``, ``ControlModifier`` and ``PowerModifier``.
 
         Examples::
@@ -192,14 +169,14 @@ class AnnotatedOperation(Operation):
         Implemented as an annotated operation, see  :class:`.AnnotatedOperation`.
 
         Args:
-            num_ctrl_qubits (int): number of controls to add to gate (default: ``1``)
-            label (str | None): ignored (used for consistency with other control methods)
-            ctrl_state (int | str | None): The control state in decimal or as a bitstring
+            num_ctrl_qubits: number of controls to add to gate (default: ``1``)
+            label: ignored (used for consistency with other control methods)
+            ctrl_state: The control state in decimal or as a bitstring
                 (e.g. ``'111'``). If ``None``, use ``2**num_ctrl_qubits-1``.
-            annotated (bool): ignored (used for consistency with other control methods)
+            annotated: ignored (used for consistency with other control methods)
 
         Returns:
-            AnnotatedOperation: Controlled version of the given operation.
+            Controlled version of the given operation.
         """
         # pylint: disable=unused-argument
         extended_modifiers = self.modifiers.copy()
@@ -215,10 +192,10 @@ class AnnotatedOperation(Operation):
         Implemented as an annotated operation, see  :class:`.AnnotatedOperation`.
 
         Args:
-            annotated (bool): ignored (used for consistency with other inverse methods)
+            annotated: ignored (used for consistency with other inverse methods)
 
         Returns:
-            AnnotatedOperation: Inverse version of the given operation.
+            Inverse version of the given operation.
         """
         # pylint: disable=unused-argument
         extended_modifiers = self.modifiers.copy()
@@ -234,12 +211,6 @@ def _canonicalize_modifiers(modifiers):
     of control qubits / control state and the total power. The InverseModifier
     will be present if total power is negative, whereas the power modifier will
     be present only with positive powers different from 1.
-    
-    Args:
-        modifiers (List[Modifier]): List of modifiers to canonicalize.
-
-    Returns:
-        List[Modifier]: Canonical list of modifiers.
     """
     power = 1
     num_ctrl_qubits = 0
