@@ -1,3 +1,31 @@
+"""
+Quafu Circuit Module
+===========================
+
+This module provides the `QuafuCircuitHelper` class, which is used to manage and manipulate
+quantum circuits specific to the Quafu framework. The helper class facilitates various
+operations such as initializing circuits from state vectors, generating sub-circuits, and
+retrieving instructions and qubit mappings.
+
+Modules:
+--------
+
+- qdao.base_circuit_wrapper: Contains the base class for circuit wrappers.
+- quafu.circuits.quantum_circuit: Contains the QuantumCircuit and related classes.
+
+Classes:
+--------
+
+- QuafuCircuitHelper: Helper class for managing Quafu quantum circuits.
+
+Attributes:
+-----------
+
+- QuantumCircuit: The main class for representing a quantum circuit.
+- QuantumGate: The base class for quantum gates.
+- SingleQubitGate: Represents single-qubit gates.
+- ControlledGate: Represents controlled gates.
+"""
 import copy
 import logging
 from typing import List, Optional
@@ -13,6 +41,24 @@ from quafu.circuits.quantum_circuit import (
 
 
 class QuafuCircuitHelper(BaseCircWrapper):
+    """
+    Helper class for managing and manipulating Quafu quantum circuits.
+
+    This class provides methods for initializing circuits from state vectors, generating
+    sub-circuits based on a list of instructions, and retrieving instructions and qubit
+    mappings from a given circuit.
+
+    Attributes:
+        _circ (QuantumCircuit): The quantum circuit object.
+
+    Methods:
+        circ: Returns or sets the quantum circuit object.
+        num_qubits: Returns the number of qubits in the circuit.
+        instructions: Returns the list of instructions in the circuit.
+        get_instr_qubits: Returns the qubits involved in a given instruction.
+        init_circ_from_sv: Initializes a circuit from a given state vector.
+        gen_sub_circ: Generates a sub-circuit based on a list of instructions.
+    """
     def __init__(self, circ: Optional[QuantumCircuit] = None) -> None:
         self._circ = circ or None
 
@@ -56,14 +102,18 @@ class QuafuCircuitHelper(BaseCircWrapper):
         return QdaoSimObj(sv, self._circ)
 
     def gen_sub_circ(self, instrs: List[QuantumGate], num_local: int, num_primary: int):
-        """Generate a sub circuit based on a list of circuit instructions
-        We assume there's no conditional instructions and no measurement
-        instructions
+        """
+        Generates a sub-circuit based on a list of circuit instructions.
+
+        Assumes there are no conditional instructions and no measurement instructions.
 
         Args:
-            instrs (List[QuantumGate]): A list of instructions
-        Return:
-            QdaoCircuit
+            instrs (List[QuantumGate]): A list of instructions.
+            num_local (int): The number of local qubits.
+            num_primary (int): The number of primary qubits.
+
+        Returns:
+            QdaoCircuit: The generated sub-circuit.
         """
         if not isinstance(self._circ, QuantumCircuit):
             raise ValueError("Please set self._circ")

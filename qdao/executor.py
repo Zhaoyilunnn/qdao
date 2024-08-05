@@ -1,3 +1,17 @@
+"""
+Parallel Execution Module
+=========================
+
+This module provides various classes for parallel execution of functions using threads and asynchronous I/O.
+
+Classes:
+    ParallelExecutor: Executes a function in parallel using threads.
+    BatchParallelExecutor: Executes a function in parallel using threads, processing in batches.
+    PoolParallelExecutor: Executes a function in parallel using a thread pool.
+    ConstantPoolParallelExecutor: Executes a function in parallel using a constant-sized thread pool.
+    AsyncIoExecutor: Executes a function in parallel using asyncio for asynchronous I/O operations.
+"""
+
 import asyncio
 import concurrent.futures
 import multiprocessing as mp
@@ -8,11 +22,21 @@ from typing import Optional
 
 
 class ParallelExecutor:
+    """
+    Executes a function in parallel using threads.
+
+    Attributes:
+        _func (callable): The function to execute.
+        _args (list): The list of arguments for the function.
+    """
     def __init__(self, func, args) -> None:
         self._func = func
         self._args = args
 
     def execute(self):
+        """
+        Execute the function in parallel using threads.
+        """
         threads = [Thread(target=self._func, args=arg) for arg in self._args]
 
         for thread in threads:
@@ -23,7 +47,17 @@ class ParallelExecutor:
 
 
 class BatchParallelExecutor:
+    """
+    Executes a function in parallel using threads, processing in batches.
+    """
     def execute(self, func, args_list):
+        """
+        Execute the function in parallel using threads, processing in batches.
+
+        Args:
+            func (callable): The function to execute.
+            args_list (list): The list of argument lists for the function.
+        """
         cpu_cnt = mp.cpu_count()
 
         def split_list(lst, size):
@@ -42,7 +76,17 @@ class BatchParallelExecutor:
 
 
 class PoolParallelExecutor:
+    """
+    Executes a function in parallel using a thread pool.
+    """
     def execute(self, func, args_list):
+        """
+        Execute the function in parallel using a thread pool.
+
+        Args:
+            func (callable): The function to execute.
+            args_list (list): The list of argument lists for the function.
+        """
         res = []
 
         with concurrent.futures.ThreadPoolExecutor(
@@ -62,8 +106,11 @@ class PoolParallelExecutor:
 class ConstantPoolParallelExecutor:
 
     """
-    When NQ is much larger than NL, there will be excessive overhead
-    Try to run thread pool group by group with each group of CPU_COUNT size
+    Executes a function in parallel using a constant-sized thread pool.
+
+    When the number of qubits (NQ) is much larger than the number of local qubits (NL), 
+    there will be excessive overhead. This class tries to run a thread pool group 
+    by group with each group of CPU_COUNT size.
     """
 
     CPU_CNT = mp.cpu_count()
@@ -83,6 +130,13 @@ class ConstantPoolParallelExecutor:
                     print(f"exception! {e}")
 
     def execute(self, func, args_list):
+        """
+        Execute the function in parallel using a constant-sized thread pool.
+
+        Args:
+            func (callable): The function to execute.
+            args_list (list): The list of argument lists for the function.
+        """
         res = []
 
         def split_list(lst, size):
@@ -98,9 +152,11 @@ class ConstantPoolParallelExecutor:
 class AsyncIoExecutor:
 
     """
-    When NQ is much larger than NL, there will be excessive overhead
-    Try to run thread pool group by group with each group of CPU_COUNT size
+    Executes a function in parallel using asyncio for asynchronous I/O operations.
 
+    When the number of qubits (NQ) is much larger than the number of local qubits (NL), 
+    there will be excessive overhead. This class tries to run thread pool group 
+    by group with each group of CPU_COUNT size.
     """
 
     CPU_CNT = mp.cpu_count()
@@ -117,4 +173,11 @@ class AsyncIoExecutor:
         results = await asyncio.gather(*tasks)
 
     def execute(self, func, args_list):
+        """
+        Execute the function in parallel using asyncio.
+
+        Args:
+            func (callable): The function to execute.
+            args_list (list): The list of argument lists for the function.
+        """
         asyncio.run(self._execute_one_batch(func, args_list))

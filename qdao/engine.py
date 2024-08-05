@@ -1,3 +1,27 @@
+"""
+Quantum Circuit Engine Module
+================================
+
+This module provides an `Engine` class to execute quantum circuits using various
+partitioning strategies and statevector management techniques. The module integrates
+with different quantum simulators and supports parallel execution of sub-circuits.
+
+Modules:
+--------
+- qdao.circuit: Contains classes and methods related to quantum circuit partitioning and handling.
+- qdao.manager: Manages statevector storage and retrieval.
+- qdao.simulator: Provides simulator interfaces for different quantum computing backends.
+- qdao.util: Utility functions for safe import, file name generation, and timing.
+
+Classes:
+--------
+- Engine: The main class that handles the execution of quantum circuits.
+
+Attributes:
+-----------
+- time_it: A decorator to measure the execution time of methods.
+- print_statistics: A function to print execution statistics.
+"""
 import logging
 from time import time
 from typing import Any, Optional
@@ -19,7 +43,21 @@ print_statistics = safe_import("qutils", "print_statistics")
 
 
 class Engine:
-    """Engine to execute a quantum circuit"""
+    """
+    Engine to execute a quantum circuit.
+
+    Attributes:
+        _part (BasePartitioner): Partitioner for the circuit.
+        _sim (Simulator): Simulator object for the backend.
+        _circ_helper (CircuitHelper): Helper for circuit initialization.
+        _circ (Any): Quantum circuit to be executed.
+        _nq (int): Number of qubits in the circuit.
+        _manager (SvManager): Statevector manager.
+        _np (int): Number of primary qubits.
+        _nl (int): Number of local qubits.
+        _num_chunks (int): Number of chunks for statevector simulation.   
+        
+    """
 
     def __init__(
         self,
@@ -33,6 +71,18 @@ class Engine:
         sv_location="disk",
         **backend_args
     ) -> None:
+        """
+        Args:
+        partitioner (Optional[BasePartitioner]): Partitioner for the circuit.
+        manager (Optional[SvManager]): Statevector manager.
+        circuit (Any): Quantum circuit to be executed.
+        num_primary (int): Number of primary qubits.
+        num_local (int): Number of local qubits.
+        is_parallel (bool): Whether to run simulations in parallel.
+        backend (str): Backend simulator to use.
+        sv_location (str): Location to store statevectors.
+        **backend_args: Additional arguments for the backend simulator. 
+        """  
         if isinstance(partitioner, BasePartitioner):
             self._part = partitioner
         else:
@@ -76,7 +126,7 @@ class Engine:
     def _preprocess(self, sub_circ: QdaoCircuit, ichunk: int):
         """Preprocessing before running a sub-simulation
         Args:
-            sub_circ (VirtualCircuit):
+            sub_circ (VirtualCircuit): Sub-circuit to be processed.
             ichunk (int): For each sub-circuit, we need to
                 simulate chunk by chunk, (num_chunks = 1<<(nq-np))
         """
@@ -145,16 +195,14 @@ class Engine:
     @time_it
     def _initialize(self):
         """
-        Init storage units to "|000...0>"
+        Initialize storage units to the state "|000...0>".
         """
         self._manager.initialize()
 
     def run(self):
         """Run simulation
         1. Partition the circuit into sub-circuits
-        2. For each sub-circuit, run for 1<<(nq-np) times of
-           simulations. Each simulation will init from a
-           different part of statevector
+        2. For each sub-circuit, run simulations `1<<(nq-np)` times. Each simulation will initialize from a different part of the statevector.
         """
         sub_circs = self._part.run(self._circ)
         logging.info("Number of sub-circuits: {}".format(len(sub_circs)))
